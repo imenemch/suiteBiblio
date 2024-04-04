@@ -9,7 +9,9 @@ import biblio_Gestion_Lecteur.SessionUtilisateur;
 public class CatalogueLecteur extends JFrame {
     private JPanel booksPanel;
     private JTextField searchField;
-
+    public void startSession(int userId) {
+        SessionUtilisateur.getInstance().demarrerSession(userId);
+    }
     public CatalogueLecteur() {
         setTitle("Catalogue des Livres");
         setSize(800, 600);
@@ -146,19 +148,19 @@ public class CatalogueLecteur extends JFrame {
         disponibiliteLabel.setHorizontalAlignment(SwingConstants.CENTER); // Centrer le texte horizontalement
         bookPanel.add(disponibiliteLabel, gbc);
 
-        // Action du clic sur un livre pour emprunter
         bookPanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 int choix = JOptionPane.showConfirmDialog(CatalogueLecteur.this, "Voulez-vous emprunter ce livre ?", "Emprunter un livre", JOptionPane.YES_NO_OPTION);
                 if (choix == JOptionPane.YES_OPTION) {
-                    int idUtilisateur = SessionUtilisateur.getInstance().getIdUtilisateur();
-                    emprunterLivre(idLivre, idUtilisateur);
+                    int idUtilisateur = SessionUtilisateur.getInstance().getId_u();
+                    emprunterLivre(idLivre, idUtilisateur); // Appeler la méthode pour emprunter le livre
                     JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été emprunté avec succès.");
                     chargerTousLesLivres();
                 }
             }
         });
+
 
 
 

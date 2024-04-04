@@ -63,6 +63,7 @@ public class LoginPage extends JFrame implements ActionListener {
             int userId = userDAO.getUserId(email, hashedPassword); // Récupérer l'ID de l'utilisateur
 
             if (userId != -1) { // Vérifier si l'identifiant de l'utilisateur est valide
+                biblio_Gestion_Lecteur.SessionUtilisateur.getInstance().demarrerSession(userId); // Initialiser la session avec l'idUtilisateur
                 String role = userDAO.getUserRole(email);
                 if ("lecteur".equals(role)) {
                     dispose();
@@ -78,6 +79,7 @@ public class LoginPage extends JFrame implements ActionListener {
             } else {
                 JOptionPane.showMessageDialog(this, "Identifiants incorrects", "Erreur", JOptionPane.ERROR_MESSAGE);
             }
+
         } else if (e.getSource() == buttonRegister) {
             openRegistrationPage();
         }

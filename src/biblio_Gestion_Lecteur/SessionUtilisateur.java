@@ -2,11 +2,10 @@ package biblio_Gestion_Lecteur;
 
 public class SessionUtilisateur {
     private static SessionUtilisateur instance;
-    private int idUtilisateur;
-    // Ajoutez d'autres informations sur l'utilisateur si nécessaire
+    private int id_u;
 
     private SessionUtilisateur() {
-        // Initialisez les valeurs par défaut ou récupérez-les à partir de la base de données si l'utilisateur est déjà connecté
+
     }
 
     public static SessionUtilisateur getInstance() {
@@ -16,14 +15,12 @@ public class SessionUtilisateur {
         return instance;
     }
 
-    public void demarrerSession(int idUtilisateur) {
-        this.idUtilisateur = idUtilisateur;
-        // Initialisez d'autres informations sur l'utilisateur si nécessaire
+    public void demarrerSession(int id_u) {
+        this.id_u = id_u;
+
     }
 
-    public int getIdUtilisateur() {
-        return idUtilisateur;
+    public int getId_u() {
+        return id_u;
     }
-
-    // Ajoutez d'autres méthodes pour accéder aux informations de l'utilisateur et gérer la session
 }

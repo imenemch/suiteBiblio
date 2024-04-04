@@ -1,4 +1,5 @@
 package biblio_Gestion_Admin;
+
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -65,6 +66,7 @@ public class CatalogueAdmin extends JFrame {
         JButton searchButton = new JButton("Rechercher");
         JButton buttonEdit = new JButton("Modifier");
         JButton buttonSupp = new JButton("Supprimer");
+        JButton buttonAdd = new JButton("Ajouter");
         JButton buttonRetour = new JButton("Retour");
         JPanel searchPanel = new JPanel();
         searchPanel.add(buttonRetour);
@@ -74,6 +76,7 @@ public class CatalogueAdmin extends JFrame {
         searchPanel.add(searchButton);
         searchPanel.add(buttonEdit);
         searchPanel.add(buttonSupp);
+        searchPanel.add(buttonAdd);
         add(searchPanel, BorderLayout.NORTH);
 
         // Action du bouton de recherche
@@ -109,6 +112,12 @@ public class CatalogueAdmin extends JFrame {
             } else {
                 JOptionPane.showMessageDialog(this, "Veuillez sélectionner un livre à supprimer.");
             }
+        });
+
+        // Action du bouton d'ajout
+        buttonAdd.addActionListener(e -> {
+            // Ouvrir le formulaire d'ajout de livre
+            new AjoutLivreForm();
         });
 
         setVisible(true);
@@ -183,9 +192,6 @@ public class CatalogueAdmin extends JFrame {
         // Actualiser la liste des livres après la suppression
         chargerTousLesLivres();
     }
-
-
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(CatalogueAdmin::new);
