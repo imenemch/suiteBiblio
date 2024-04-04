@@ -5,6 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class LoginPage extends JFrame implements ActionListener {
+    private int idLivre;
     private JLabel labelEmail, labelPassword;
     private JTextField textEmail;
     private JPasswordField textPassword;
@@ -59,11 +60,17 @@ public class LoginPage extends JFrame implements ActionListener {
             UserBdd userDAO = new UserBdd();
             String hashedPassword = PswdHash.hashPassword(password); // Hasher le mot de passe saisi
 
-            if (userDAO.checkUser(email, hashedPassword)) { // Vérifier avec le mot de passe hashé
+            int userId = userDAO.getUserId(email, hashedPassword); // Récupérer l'ID de l'utilisateur
+
+            if (userId != -1) { // Vérifier si l'identifiant de l'utilisateur est valide
                 String role = userDAO.getUserRole(email);
                 if ("lecteur".equals(role)) {
                     dispose();
-                    SwingUtilities.invokeLater(() -> new biblio_Gestion_Lecteur.CatalogueLecteur());
+                    // Passer l'ID de l'utilisateur à la page CatalogueLecteur
+                    biblio_Gestion_Lecteur.CatalogueLecteur catalogueLecteur = new biblio_Gestion_Lecteur.CatalogueLecteur();
+
+                    // Appeler emprunterLivre en passant l'ID du livre et l'ID de l'utilisateur
+                    catalogueLecteur.emprunterLivre(idLivre, userId);
                 } else if ("admin".equals(role)) {
                     dispose();
                     SwingUtilities.invokeLater(() -> new biblio_Gestion_Admin.CatalogueAdmin());
@@ -75,6 +82,7 @@ public class LoginPage extends JFrame implements ActionListener {
             openRegistrationPage();
         }
     }
+
 
     private void openRegistrationPage() {
         dispose();

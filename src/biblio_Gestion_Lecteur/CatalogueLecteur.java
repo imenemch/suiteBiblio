@@ -1,9 +1,10 @@
 package biblio_Gestion_Lecteur;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.sql.*;
+import biblio_Gestion_Lecteur.SessionUtilisateur;
 
 public class CatalogueLecteur extends JFrame {
     private JPanel booksPanel;
@@ -45,7 +46,7 @@ public class CatalogueLecteur extends JFrame {
         emprunterButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(CatalogueLecteur.this, "Fonctionnalité d'emprunt à implémenter.");
+                JOptionPane.showMessageDialog(CatalogueLecteur.this, "Sélectionnez un livre en cliquant dessus pour l'emprunter.");
             }
         });
 
@@ -145,11 +146,45 @@ public class CatalogueLecteur extends JFrame {
         disponibiliteLabel.setHorizontalAlignment(SwingConstants.CENTER); // Centrer le texte horizontalement
         bookPanel.add(disponibiliteLabel, gbc);
 
+        // Action du clic sur un livre pour emprunter
+        bookPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                int choix = JOptionPane.showConfirmDialog(CatalogueLecteur.this, "Voulez-vous emprunter ce livre ?", "Emprunter un livre", JOptionPane.YES_NO_OPTION);
+                if (choix == JOptionPane.YES_OPTION) {
+                    int idUtilisateur = SessionUtilisateur.getInstance().getIdUtilisateur();
+                    emprunterLivre(idLivre, idUtilisateur);
+                    JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été emprunté avec succès.");
+                    chargerTousLesLivres();
+                }
+            }
+        });
+
+
+
         // Ajout du panneau du livre au panneau principal
         booksPanel.add(bookPanel);
         booksPanel.revalidate();
     }
 
+    public void emprunterLivre(int idLivre, int idUtilisateur) {
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {
+            String query = "INSERT INTO emprunts (id_u, id_livre, date_emprunt, date_retour_prevue, date_retour_effectue, penalite) VALUES (?, ?, ?, ?, NULL, 0)";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, idUtilisateur);
+            preparedStatement.setInt(2, idLivre);
+            preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+            preparedStatement.setTimestamp(4, new Timestamp(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000))); // Date de retour prévue après une semaine
+
+            int rowsInserted = preparedStatement.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("L'emprunt a été ajouté avec succès.");
+            }
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public static void main(String[] args) {
