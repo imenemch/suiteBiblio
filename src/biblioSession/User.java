@@ -30,6 +30,7 @@ public class User {
 
 	public User (int id,String nom, String prenom, String email, String password, String role, int active, Timestamp date_created) {
 	 this.id = id;
+	 this.nom = nom;
 	 this.prenom = prenom;
 	 this.email = email;
 	 this.password = password;

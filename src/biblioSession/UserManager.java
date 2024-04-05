@@ -1,11 +1,6 @@
 package biblioSession;
 
-import biblioSession.Database;
-import biblioSession.User;
-
 import java.sql.*;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +11,32 @@ public class UserManager
     public UserManager(Database database)
     {
         this.database = database;
+    }
+
+    public boolean ajouterUtilisateur(String nom, String prenom, String email) {
+        // Requête SQL pour ajouter un nouvel utilisateur
+        String sql = "INSERT INTO users (nom, prenom, email) VALUES (?, ?, ?)";
+
+        try (
+                // Obtention d'une connexion à la base de données depuis l'objet Database
+                Connection conn = database.getConnection();
+                // Création d'un objet PreparedStatement pour exécuter la requête SQL
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            // Paramétrage des valeurs pour la requête SQL
+            stmt.setString(1, nom);
+            stmt.setString(2, prenom);
+            stmt.setString(3, email);
+
+            // Exécution de la requête SQL
+            int rowsAffected = stmt.executeUpdate();
+
+            // Vérification si l'ajout a été réussi
+            return rowsAffected > 0;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false; // En cas d'erreur, retourner false
+        }
     }
 
     public List<User> getAllUsers() {
@@ -111,6 +132,54 @@ public class UserManager
             return false; // En cas d'erreur, retourner false
         }
     }
+
+    public List<User> searchUsers(String searchTerm) {
+        List<User> userList = new ArrayList<>();
+
+        // Requête SQL pour rechercher des utilisateurs par nom, prénom ou email
+        String sql = "SELECT * FROM users WHERE nom LIKE ? OR prenom LIKE ? OR email LIKE ?";
+
+        try (
+                // Obtention d'une connexion à la base de données depuis l'objet Database
+                Connection conn = database.getConnection();
+                // Création d'un objet PreparedStatement pour exécuter la requête SQL
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            // Paramétrage des valeurs pour la requête SQL en ajoutant des jokers (%) autour du terme de recherche
+            String searchTermWithWildcards = "%" + searchTerm + "%";
+            stmt.setString(1, searchTermWithWildcards);
+            stmt.setString(2, searchTermWithWildcards);
+            stmt.setString(3, searchTermWithWildcards);
+
+            // Exécution de la requête SQL et récupération des résultats dans un objet ResultSet
+            try (ResultSet rs = stmt.executeQuery()) {
+                // Parcourir les résultats du ResultSet
+                while (rs.next()) {
+                    // Récupérer les valeurs des colonnes pour chaque utilisateur
+                    int id = rs.getInt("id_u");
+                    String nom = rs.getString("nom");
+                    String prenom = rs.getString("prenom");
+                    String email = rs.getString("email");
+                    String password = rs.getString("password");
+                    String role = rs.getString("role");
+                    int active = rs.getInt("active");
+                    Timestamp dateCreated = rs.getTimestamp("date_created");
+
+                    // Créer un objet User avec les données récupérées
+                    User user = new User(id, nom, prenom, email, password, role, active, dateCreated);
+
+                    // Ajouter l'utilisateur à la liste des utilisateurs
+                    userList.add(user);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Retourner la liste des utilisateurs trouvés
+        return userList;
+    }
+
 
 }
 
