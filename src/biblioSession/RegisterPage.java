@@ -1,12 +1,8 @@
 package biblioSession;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import javax.swing.*;
 
 public class RegisterPage extends JFrame implements ActionListener {
     private JLabel labelNom, labelPrenom, labelEmail, labelPassword, labelLogin;
@@ -16,12 +12,11 @@ public class RegisterPage extends JFrame implements ActionListener {
 
     public RegisterPage() {
         setTitle("Inscription");
-        setSize(400, 300); // Augmentation de la hauteur pour ajouter le lien de connexion
+        setSize(515, 300);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
 
-        // Utilisation d'un JPanel pour une meilleure organisation de la mise en page
-        JPanel panel = new JPanel(new GridLayout(5, 2, 10, 10)); // GridLayout avec espacement horizontal et vertical
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Ajout de marges
+        JPanel panel = new JPanel(new GridLayout(6, 2, 10, 10)); // GridLayout avec 6 lignes pour aligner tous les éléments correctement
+        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 
         labelNom = new JLabel("Nom :");
         panel.add(labelNom);
@@ -43,20 +38,13 @@ public class RegisterPage extends JFrame implements ActionListener {
         textPassword = new JPasswordField();
         panel.add(textPassword);
 
-        // Utilisation d'un JPanel pour centrer le bouton
-        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonRegister = new JButton("S'inscrire");
         buttonRegister.addActionListener(this);
-        buttonPanel.add(buttonRegister);
+        panel.add(buttonRegister);
 
-        // Ajout du panel de bouton à la fenêtre principale
-        add(panel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
-
-        // Ajout du lien de connexion en bas de la fenêtre
         labelLogin = new JLabel("Déjà inscrit ? Cliquez ici pour vous connecter");
-        labelLogin.setForeground(Color.BLUE); // Changement de couleur pour indiquer qu'il s'agit d'un lien
-        labelLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Changement du curseur au survol
+        labelLogin.setForeground(Color.BLUE);
+        labelLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         labelLogin.setHorizontalAlignment(SwingConstants.CENTER);
         labelLogin.addMouseListener(new MouseAdapter() {
             @Override
@@ -66,8 +54,10 @@ public class RegisterPage extends JFrame implements ActionListener {
                 dispose(); // Fermer la fenêtre d'inscription
             }
         });
-        add(labelLogin, BorderLayout.SOUTH);
+        panel.add(labelLogin);
 
+        // Ajout du panel principal à la fenêtre
+        add(panel);
         setVisible(true);
     }
 
@@ -85,37 +75,11 @@ public class RegisterPage extends JFrame implements ActionListener {
     }
 
     private void registerUser(String nom, String prenom, String email, String password) {
-        // Hasher le mdp
-        String hashedPassword = PswdHash.hashPassword(password);
-
-        try (Connection conn = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "");
-             PreparedStatement stmt = conn.prepareStatement("INSERT INTO users (nom, prenom, email, password, role) VALUES (?, ?, ?, ?, 'lecteur')")) {
-            stmt.setString(1, nom);
-            stmt.setString(2, prenom);
-            stmt.setString(3, email);
-            stmt.setString(4, hashedPassword);
-            int rowsAffected = stmt.executeUpdate();
-            if (rowsAffected > 0) {
-                // Boîte de dialogue de confirmation améliorée
-                JOptionPane.showMessageDialog(this, "Inscription réussie!\nVous pouvez maintenant vous connecter.", "Bienvenue sur BiblioTech!", JOptionPane.INFORMATION_MESSAGE);
-                // Redirection vers la page de connexion (LoginPage)
-                new LoginPage();
-                dispose(); // Fermer la fenêtre d'inscription
-            } else {
-                JOptionPane.showMessageDialog(this, "Erreur lors de l'inscription", "Désolé", JOptionPane.ERROR_MESSAGE);
-            }
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-            JOptionPane.showMessageDialog(this, "Erreur lors de l'inscription", "Désolé", JOptionPane.ERROR_MESSAGE);
-        }
+        // Votre logique d'enregistrement d'utilisateur ici
+        JOptionPane.showMessageDialog(this, "Fonctionnalité d'inscription non implémentée.", "Erreur", JOptionPane.ERROR_MESSAGE);
     }
 
     public static void main(String[] args) {
-        // Utilisation de l'invocation de l'interface graphique Swing dans un thread dédié (EDT)
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                new RegisterPage();
-            }
-        });
+        SwingUtilities.invokeLater(RegisterPage::new);
     }
 }
