@@ -1,8 +1,12 @@
 package biblio_Gestion_Admin;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -10,6 +14,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
+
 public class AjoutLivreForm extends JFrame {
     private JTextField titreField;
     private JTextField genreField;
@@ -17,12 +22,15 @@ public class AjoutLivreForm extends JFrame {
     private JTextField disponibiliteField;
     private JTextField nbCopieField;
     private JComboBox<String> auteurComboBox;
+    private JButton choisirImageBtn;
+
+    private File selectedImageFile;
 
     public AjoutLivreForm() {
         setTitle("Ajouter un Livre");
-        setSize(400, 300);
+        setSize(400, 350);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-        setLayout(new GridLayout(8, 2));
+        setLayout(new GridLayout(9, 2));
 
         JLabel titreLabel = new JLabel("Titre:");
         titreField = new JTextField();
@@ -44,7 +52,6 @@ public class AjoutLivreForm extends JFrame {
         add(disponibiliteLabel);
         add(disponibiliteField);
 
-
         JLabel nbCopieLabel = new JLabel("Nombre de copies:");
         nbCopieField = new JTextField();
         add(nbCopieLabel);
@@ -54,6 +61,21 @@ public class AjoutLivreForm extends JFrame {
         auteurComboBox = new JComboBox<>();
         add(auteurLabel);
         add(auteurComboBox);
+
+        choisirImageBtn = new JButton("Choisir une image");
+        add(new JLabel("Image de couverture:"));
+        add(choisirImageBtn);
+
+        choisirImageBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFileChooser fileChooser = new JFileChooser();
+                int result = fileChooser.showOpenDialog(AjoutLivreForm.this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    selectedImageFile = fileChooser.getSelectedFile();
+                }
+            }
+        });
 
         // Remplir la liste déroulante des auteurs
         remplirAuteurs();
@@ -87,45 +109,43 @@ public class AjoutLivreForm extends JFrame {
         }
     }
 
-
-
     private void ajouterLivre() {
         String titre = titreField.getText().trim();
         String genre = genreField.getText().trim();
         String ref = refField.getText().trim();
         String disponibilite = disponibiliteField.getText().trim();
-        // Supprimez la récupération de la date de publication de l'interface utilisateur
-        // String datePub = datePubField.getText().trim();
         String nbCopie = nbCopieField.getText().trim();
         String auteur = auteurComboBox.getSelectedItem().toString().trim();
 
         // Ajoutez ici le code pour insérer les données dans la base de données
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "")) {
-            String query = "INSERT INTO livres (titre, genre, ref, disponibilité, date_pub, nb_copie, id_auteur) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String query = "INSERT INTO livres (titre, genre, ref, disponibilité, date_pub, nb_copie, id_auteur, couverture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, titre);
                 statement.setString(2, genre);
                 statement.setString(3, ref);
                 statement.setString(4, disponibilite);
-                // Utilisez la date et l'heure actuelles pour la date de publication
                 statement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
                 statement.setString(6, nbCopie);
-                // Récupérez l'ID de l'auteur sélectionné depuis la base de données
                 int idAuteur = getIdAuteur(auteur);
                 statement.setInt(7, idAuteur);
-                // Exécutez la requête d'insertion
+                // Ajouter la couverture d'image
+                if (selectedImageFile != null) {
+                    FileInputStream fis = new FileInputStream(selectedImageFile);
+                    statement.setBinaryStream(8, fis, (int) selectedImageFile.length());
+                } else {
+                    statement.setNull(8, java.sql.Types.BLOB);
+                }
                 statement.executeUpdate();
                 JOptionPane.showMessageDialog(this, "Livre ajouté avec succès !");
-                // Fermez la fenêtre après l'ajout
                 dispose();
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | IOException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(this, "Erreur lors de l'ajout du livre : " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
 
-    // Méthode pour obtenir l'ID de l'auteur à partir du nom et prénom
     private int getIdAuteur(String nomPrenom) {
         int idAuteur = -1; // Valeur par défaut si l'auteur n'est pas trouvé
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "")) {
@@ -146,7 +166,6 @@ public class AjoutLivreForm extends JFrame {
         }
         return idAuteur;
     }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AjoutLivreForm::new);
