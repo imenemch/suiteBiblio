@@ -1,5 +1,7 @@
 package biblioSession;
 
+import java.sql.Timestamp;
+
 public class User {
     private int id;
     private String nom;
@@ -7,13 +9,33 @@ public class User {
     private String email;
     private String password;
     private String role; // "lecteur" ou "admin"
+	private int active;
+	private Timestamp date_created;
 
- public User (int id, String prenom, String email, String password, String role) {
+	public int getActive() {
+		return active;
+	}
+
+	public void setActive(int active) {
+		this.active = active;
+	}
+
+	public Timestamp getDate_created() {
+		return date_created;
+	}
+
+	public void setDate_created(Timestamp date_created) {
+		this.date_created = date_created;
+	}
+
+	public User (int id,String nom, String prenom, String email, String password, String role, int active, Timestamp date_created) {
 	 this.id = id;
 	 this.prenom = prenom;
 	 this.email = email;
 	 this.password = password;
 	 this.role = role;
+	 this.active = active;
+	 this.date_created = date_created;
  }
 
 public int getId() {

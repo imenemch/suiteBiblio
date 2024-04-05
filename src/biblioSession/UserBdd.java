@@ -69,6 +69,8 @@ public class UserBdd {
         return role;
     }
 
+
+
     public static void main(String[] args) {
         // Exemple d'utilisation de la méthode checkUser
         UserBdd userBddInstance = new UserBdd();
