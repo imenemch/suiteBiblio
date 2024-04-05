@@ -1,17 +1,21 @@
 package biblio_Gestion_Lecteur;
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
+import java.io.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import biblio_Gestion_Lecteur.SessionUtilisateur;
 
 public class CatalogueLecteur extends JFrame {
     private JPanel booksPanel;
     private JTextField searchField;
+
     public void startSession(int userId) {
         SessionUtilisateur.getInstance().demarrerSession(userId);
     }
+
     public CatalogueLecteur() {
         setTitle("Catalogue des Livres");
         setSize(800, 600);
@@ -101,6 +105,14 @@ public class CatalogueLecteur extends JFrame {
         }
     }
 
+    // Méthode pour redimensionner une image à une taille fixe
+    private ImageIcon redimensionnerImage(ImageIcon imageIcon, int width, int height) {
+        Image image = imageIcon.getImage();
+        Image nouvelleImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+        return new ImageIcon(nouvelleImage);
+    }
+
+    // Méthode pour afficher un livre avec une couverture redimensionnée
     private void afficherLivre(ResultSet resultSet) throws SQLException {
         int idLivre = resultSet.getInt("id_livre");
         String titre = resultSet.getString("titre");
@@ -113,10 +125,20 @@ public class CatalogueLecteur extends JFrame {
         byte[] coverBytes = resultSet.getBytes("couverture");
         ImageIcon icon = null;
         if (coverBytes != null && coverBytes.length > 0) {
-            icon = new ImageIcon(coverBytes);
+            try {
+                // Convertir les bytes en une image ImageIcon
+                ByteArrayInputStream bais = new ByteArrayInputStream(coverBytes);
+                BufferedImage image = ImageIO.read(bais);
+                icon = new ImageIcon(image);
+
+                // Redimensionner l'image à une taille fixe (par exemple, 200x300 pixels)
+                icon = redimensionnerImage(icon, 200, 300);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
-        // Création du panneau pour afficher les informations du livre
+        // Création du panneau pour afficher les informations du livre avec l'image redimensionnée
         JPanel bookPanel = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
@@ -173,7 +195,6 @@ public class CatalogueLecteur extends JFrame {
         booksPanel.revalidate();
     }
 
-
     public void emprunterLivre(int idLivre, int idUtilisateur) {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {
             String query = "INSERT INTO emprunts (id_u, id_livre, date_emprunt, date_retour_prevue, date_retour_effectue, penalite) VALUES (?, ?, ?, ?, NULL, 0)";
@@ -192,7 +213,6 @@ public class CatalogueLecteur extends JFrame {
             e.printStackTrace();
         }
     }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(CatalogueLecteur::new);
