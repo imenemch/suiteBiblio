@@ -15,7 +15,6 @@ public class AjoutLivreForm extends JFrame {
     private JTextField genreField;
     private JTextField refField;
     private JTextField disponibiliteField;
-    private JTextField datePubField;
     private JTextField nbCopieField;
     private JComboBox<String> auteurComboBox;
 
@@ -45,10 +44,6 @@ public class AjoutLivreForm extends JFrame {
         add(disponibiliteLabel);
         add(disponibiliteField);
 
-        JLabel datePubLabel = new JLabel("Date de publication:");
-        datePubField = new JTextField();
-        add(datePubLabel);
-        add(datePubField);
 
         JLabel nbCopieLabel = new JLabel("Nombre de copies:");
         nbCopieField = new JTextField();

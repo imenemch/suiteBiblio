@@ -101,7 +101,6 @@ public class CatalogueLecteur extends JFrame {
         }
     }
 
-    // Méthode pour afficher un livre sur le panneau
     private void afficherLivre(ResultSet resultSet) throws SQLException {
         int idLivre = resultSet.getInt("id_livre");
         String titre = resultSet.getString("titre");
@@ -112,7 +111,10 @@ public class CatalogueLecteur extends JFrame {
 
         // Récupération de l'image de couverture depuis la base de données
         byte[] coverBytes = resultSet.getBytes("couverture");
-        ImageIcon icon = new ImageIcon(coverBytes);
+        ImageIcon icon = null;
+        if (coverBytes != null && coverBytes.length > 0) {
+            icon = new ImageIcon(coverBytes);
+        }
 
         // Création du panneau pour afficher les informations du livre
         JPanel bookPanel = new JPanel(new GridBagLayout());
@@ -123,9 +125,14 @@ public class CatalogueLecteur extends JFrame {
         gbc.insets = new Insets(10, 10, 10, 10); // Ajouter de l'espace entre les livres
 
         // Affichage de l'image de la couverture
-        JLabel coverLabel = new JLabel();
-        coverLabel.setIcon(icon);
-        bookPanel.add(coverLabel, gbc);
+        if (icon != null) {
+            JLabel coverLabel = new JLabel();
+            coverLabel.setIcon(icon);
+            bookPanel.add(coverLabel, gbc);
+        } else {
+            JLabel coverLabel = new JLabel("Image non disponible");
+            bookPanel.add(coverLabel, gbc);
+        }
 
         // Affichage des informations du livre
         gbc.gridy = 1;
@@ -161,13 +168,11 @@ public class CatalogueLecteur extends JFrame {
             }
         });
 
-
-
-
         // Ajout du panneau du livre au panneau principal
         booksPanel.add(bookPanel);
         booksPanel.revalidate();
     }
+
 
     public void emprunterLivre(int idLivre, int idUtilisateur) {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {

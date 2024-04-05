@@ -1,13 +1,13 @@
 package biblio_Gestion_Admin;
 
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
 
 public class CatalogueAdmin extends JFrame {
     private JTable table;
@@ -15,9 +15,12 @@ public class CatalogueAdmin extends JFrame {
 
     public CatalogueAdmin() {
         setTitle("Catalogue des Livres");
-        setSize(800, 600);
+        setSize(900, 600); // Agrandissement de la taille de la fenêtre
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+        // Maximiser la fenêtre et la centrer sur l'écran
+        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        setLocationRelativeTo(null);
 
         // Création du modèle de table
         DefaultTableModel model = new DefaultTableModel();
@@ -57,27 +60,70 @@ public class CatalogueAdmin extends JFrame {
         // Création de la table avec le modèle de données
         table = new JTable(model);
 
+        // Ajustement de la largeur des colonnes
+        table.getColumnModel().getColumn(0).setPreferredWidth(10); // ID
+        table.getColumnModel().getColumn(1).setPreferredWidth(180); // Titre
+        table.getColumnModel().getColumn(2).setPreferredWidth(40); // Genre
+        table.getColumnModel().getColumn(3).setPreferredWidth(20); // Référence
+        table.getColumnModel().getColumn(4).setPreferredWidth(60); // Disponibilité
+        table.getColumnModel().getColumn(5).setPreferredWidth(150); // Date de publication
+        table.getColumnModel().getColumn(6).setPreferredWidth(60); // Nombre de copies
+        table.getColumnModel().getColumn(7).setPreferredWidth(200); // Auteur
+
         // Ajout de la table à un JScrollPane pour permettre le défilement
         JScrollPane scrollPane = new JScrollPane(table);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Ajout d'un champ de recherche
+        // Initialisation de searchField
         searchField = new JTextField(20);
-        JButton searchButton = new JButton("Rechercher");
-        JButton buttonEdit = new JButton("Modifier");
-        JButton buttonSupp = new JButton("Supprimer");
-        JButton buttonAdd = new JButton("Ajouter");
-        JButton buttonRetour = new JButton("Retour");
-        JPanel searchPanel = new JPanel();
-        searchPanel.add(buttonRetour);
-        searchPanel.add(Box.createRigidArea(new Dimension(60, 0)));
+        // Charger les images à partir du package biblio_Gestion_Admin
+        ImageIcon searchIcon = new ImageIcon(getClass().getResource("search.png"));
+        ImageIcon editIcon = new ImageIcon(getClass().getResource("edit.png"));
+        ImageIcon deleteIcon = new ImageIcon(getClass().getResource("delete.png"));
+        ImageIcon addIcon = new ImageIcon(getClass().getResource("add.png"));
+        ImageIcon backIcon = new ImageIcon(getClass().getResource("back.png"));
+
+        // Redimensionnement des icônes pour ajuster la taille des boutons
+        searchIcon = new ImageIcon(searchIcon.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
+        editIcon = new ImageIcon(editIcon.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
+        deleteIcon = new ImageIcon(deleteIcon.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
+        addIcon = new ImageIcon(addIcon.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
+        backIcon = new ImageIcon(backIcon.getImage().getScaledInstance(20, 20, Image.SCALE_DEFAULT));
+
+        // Déclaration et initialisation des boutons avec les icônes redimensionnées
+        JButton searchButton = new JButton(searchIcon);
+        JButton buttonEdit = new JButton(editIcon);
+        JButton buttonSupp = new JButton(deleteIcon);
+        JButton buttonAdd = new JButton(addIcon);
+        JButton buttonRetour = new JButton(backIcon);
+
+        // Ajout de marges autour des icônes
+        Insets buttonInsets = new Insets(5, 10, 5, 10); // Marges pour les boutons
+        searchButton.setMargin(buttonInsets);
+        buttonEdit.setMargin(buttonInsets);
+        buttonSupp.setMargin(buttonInsets);
+        buttonAdd.setMargin(buttonInsets);
+        buttonRetour.setMargin(buttonInsets);
+
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Utilisation d'un layout pour positionner les boutons au centre
+        buttonPanel.add(buttonEdit);
+        buttonPanel.add(buttonSupp);
+        buttonPanel.add(buttonAdd);
+
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER)); // Utilisation d'un layout pour positionner le champ de recherche au centre
         searchPanel.add(new JLabel("Rechercher par titre : "));
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
-        searchPanel.add(buttonEdit);
-        searchPanel.add(buttonSupp);
-        searchPanel.add(buttonAdd);
-        add(searchPanel, BorderLayout.NORTH);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT)); // Utilisation d'un layout pour positionner le bouton retour à droite
+        bottomPanel.add(buttonRetour);
+
+        JPanel mainPanel = new JPanel(new BorderLayout()); // Utilisation d'un layout border pour organiser les panels
+        mainPanel.add(searchPanel, BorderLayout.NORTH);
+        mainPanel.add(buttonPanel, BorderLayout.CENTER);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        add(mainPanel, BorderLayout.NORTH);
 
         // Action du bouton de recherche
         searchButton.addActionListener(e -> {
