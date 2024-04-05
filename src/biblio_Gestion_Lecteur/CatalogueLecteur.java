@@ -18,13 +18,12 @@ public class CatalogueLecteur extends JFrame {
 
     public CatalogueLecteur() {
         setTitle("Catalogue des Livres");
-        setSize(800, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Panneau pour afficher les livres
+        // Panneau principal pour afficher les livres
         booksPanel = new JPanel();
-        booksPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
+        booksPanel.setLayout(new GridLayout(0, 3, 10, 10)); // 3 livres par ligne avec un espace de 10 pixels
         JScrollPane scrollPane = new JScrollPane(booksPanel);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -59,6 +58,8 @@ public class CatalogueLecteur extends JFrame {
         // Charger tous les livres au démarrage de l'application
         chargerTousLesLivres();
 
+        pack(); // Ajuster la taille de la fenêtre pour qu'elle s'adapte au contenu
+        setLocationRelativeTo(null); // Centrer la fenêtre sur l'écran
         setVisible(true);
     }
 
@@ -195,6 +196,7 @@ public class CatalogueLecteur extends JFrame {
         booksPanel.revalidate();
     }
 
+    // Méthode pour emprunter un livre
     public void emprunterLivre(int idLivre, int idUtilisateur) {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {
             String query = "INSERT INTO emprunts (id_u, id_livre, date_emprunt, date_retour_prevue, date_retour_effectue, penalite) VALUES (?, ?, ?, ?, NULL, 0)";
