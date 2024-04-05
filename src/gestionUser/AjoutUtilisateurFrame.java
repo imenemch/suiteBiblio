@@ -17,7 +17,7 @@ public class AjoutUtilisateurFrame extends JFrame {
         setTitle("Ajouter un Utilisateur");
         setSize(500, 400);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Ferme seulement la fenêtre actuelle
-        setLayout(new GridLayout(4, 2));
+        setLayout(new GridLayout(5, 2));
 
         // Création des champs de texte pour saisir les informations de l'utilisateur
         JLabel nomLabel = new JLabel("Nom :");
@@ -63,6 +63,21 @@ public class AjoutUtilisateurFrame extends JFrame {
             }
         });
 
+        // Création du bouton annuler
+        JButton annulerButton = new JButton("Annuler");
+        annulerButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Fermer la fenêtre d'ajout d'utilisateur
+                dispose();
+            }
+        });
+
+        // Création d'un panel pour regrouper les boutons
+        JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        buttonPanel.add(ajouterButton);
+        buttonPanel.add(annulerButton);
+
         // Ajout des composants à la fenêtre
         add(nomLabel);
         add(nomField);
@@ -71,7 +86,7 @@ public class AjoutUtilisateurFrame extends JFrame {
         add(emailLabel);
         add(emailField);
         add(new JLabel()); // Pour aligner correctement les composants
-        add(ajouterButton);
+        add(buttonPanel); // Ajout du panel de boutons
 
         setVisible(true);
     }

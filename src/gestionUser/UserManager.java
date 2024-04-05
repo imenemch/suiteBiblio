@@ -41,6 +41,36 @@ public class UserManager
         }
     }
 
+    public boolean emailExists(String email) {
+        // Requête SQL pour vérifier si l'email existe déjà dans la base de données
+        String sql = "SELECT COUNT(*) FROM users WHERE email = ?";
+
+        try (
+                // Obtention d'une connexion à la base de données depuis l'objet Database
+                Connection conn = database.getConnection();
+                // Création d'un objet PreparedStatement pour exécuter la requête SQL
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            // Paramétrage de la valeur pour la requête SQL
+            stmt.setString(1, email);
+
+            // Exécution de la requête SQL et récupération du résultat dans un objet ResultSet
+            try (ResultSet rs = stmt.executeQuery()) {
+                // Récupérer le nombre de lignes retournées
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0; // Si le nombre de lignes retournées est supérieur à 0, l'email existe déjà
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // En cas d'erreur ou si aucun résultat n'a été retourné, retourner false
+        return false;
+    }
+
+
     public List<User> getAllUsers() {
         List<User> userList = new ArrayList<>();
 
