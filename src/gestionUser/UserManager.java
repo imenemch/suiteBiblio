@@ -1,4 +1,6 @@
-package biblioSession;
+package gestionUser;
+
+import biblioSession.Database;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -81,7 +83,7 @@ public class UserManager
 
     public boolean updateUser(User user) {
         // Requête SQL pour mettre à jour les informations de l'utilisateur
-        String sql = "UPDATE users SET nom = ?, prenom = ?, email = ?, password = ?, role = ?, active = ? WHERE id_u = ?";
+        String sql = "UPDATE users SET nom = ?, prenom = ?, email = ?, role = ?, active = ? WHERE id_u = ?";
 
         try (
                 // Obtention d'une connexion à la base de données depuis l'objet Database
@@ -93,10 +95,9 @@ public class UserManager
             stmt.setString(1, user.getNom());
             stmt.setString(2, user.getPrenom());
             stmt.setString(3, user.getEmail());
-            stmt.setString(4, user.getPassword());
-            stmt.setString(5, user.getRole());
-            stmt.setInt(6, user.getActive());
-            stmt.setInt(7, user.getId());
+            stmt.setString(4, user.getRole());
+            stmt.setInt(5, user.getActive());
+            stmt.setInt(6, user.getId());
 
             // Exécution de la requête SQL
             int rowsAffected = stmt.executeUpdate();
@@ -179,6 +180,47 @@ public class UserManager
         // Retourner la liste des utilisateurs trouvés
         return userList;
     }
+
+    public User getUserById(int userId) {
+        User user = null;
+
+        // Requête SQL pour récupérer un utilisateur par son ID
+        String sql = "SELECT * FROM users WHERE id_u = ?";
+
+        try (
+                // Obtention d'une connexion à la base de données depuis l'objet Database
+                Connection conn = database.getConnection();
+                // Création d'un objet PreparedStatement pour exécuter la requête SQL
+                PreparedStatement stmt = conn.prepareStatement(sql)
+        ) {
+            // Paramétrage de la valeur pour la requête SQL
+            stmt.setInt(1, userId);
+
+            // Exécution de la requête SQL et récupération du résultat dans un objet ResultSet
+            try (ResultSet rs = stmt.executeQuery()) {
+                // Vérifier si un utilisateur correspondant à l'ID a été trouvé
+                if (rs.next()) {
+                    // Récupérer les valeurs des colonnes pour l'utilisateur trouvé
+                    String nom = rs.getString("nom");
+                    String prenom = rs.getString("prenom");
+                    String email = rs.getString("email");
+                    String password = rs.getString("password");
+                    String role = rs.getString("role");
+                    int active = rs.getInt("active");
+                    Timestamp dateCreated = rs.getTimestamp("date_created");
+
+                    // Créer un objet User avec les données récupérées
+                    user = new User(userId, nom, prenom, email, password, role, active, dateCreated);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        // Retourner l'utilisateur trouvé (ou null s'il n'existe pas)
+        return user;
+    }
+
 
 
 }

@@ -1,8 +1,10 @@
 package biblio_Gestion_Admin;
 
 import biblioSession.Database;
-import biblioSession.User;
-import biblioSession.UserManager;
+import gestionUser.AjoutUtilisateurFrame;
+import gestionUser.ModificationUtilisateurFrame;
+import gestionUser.User;
+import gestionUser.UserManager;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -156,15 +158,18 @@ public class ListeUsers extends JFrame {
             return;
         }
 
-        // Obtenir l'ID de l'utilisateur sélectionné
+        // Récupérer l'ID de l'utilisateur sélectionné
         int userId = (int) table.getValueAt(rowIndex, 0);
 
-        // Ouvrir une fenêtre pour modifier l'utilisateur avec l'ID correspondant
-        // (vous devez implémenter cette fonctionnalité dans une autre classe)
-        JOptionPane.showMessageDialog(this, "Fonctionnalité de modification d'utilisateur à implémenter pour l'ID : " + userId, "Modification d'utilisateur", JOptionPane.INFORMATION_MESSAGE);
+        // Récupérer les informations de l'utilisateur sélectionné depuis la base de données
+        UserManager userManager = new UserManager(new Database());
+        User user = userManager.getUserById(userId);
+
+        // Ouvrir une fenêtre de modification avec les informations de l'utilisateur sélectionné
+        new ModificationUtilisateurFrame(user);
     }
 
-    // Méthode pour supprimer un utilisateur
+
     // Méthode pour supprimer un utilisateur
     private void supprimerUtilisateur() {
         // Obtenir l'index de la ligne sélectionnée dans la table

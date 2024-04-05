@@ -1,7 +1,6 @@
-package biblio_Gestion_Admin;
+package gestionUser;
 
 import biblioSession.Database;
-import biblioSession.UserManager;
 import biblio_Gestion_Admin.ListeUsers;
 
 import javax.swing.*;
