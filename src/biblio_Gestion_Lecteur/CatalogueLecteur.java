@@ -212,20 +212,33 @@ public class CatalogueLecteur extends JFrame {
             }
         });
 
-        // Ajout du bouton "Ajouter aux favoris"
-        JButton addToFavoritesButton = new JButton("Ajouter aux favoris");
+        // Création du bouton "Ajouter aux favoris" avec une icône de cœur
+        ImageIcon heartIcon = new ImageIcon(getClass().getResource("heart.png")); // Assurez-vous d'avoir une image de cœur (par exemple, heart.png) dans votre répertoire d'images
+        Image heartImage = heartIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH); // Réduire la taille de l'icône
+        ImageIcon smallHeartIcon = new ImageIcon(heartImage);
+        JButton addToFavoritesButton = new JButton(smallHeartIcon);
+
+
         addToFavoritesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                // Ajouter ici le code pour ajouter le livre aux favoris
                 int idUtilisateur = SessionUtilisateur.getInstance().getId_u();
                 if (idUtilisateur != 0) {
                     ajouterEnFavoris(idUtilisateur, idLivre); // Appeler la méthode pour ajouter le livre en favori
                     JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été ajouté aux favoris avec succès.");
+                    // Changer l'icône du bouton en "heartred.png"
+                    ImageIcon heartRedIcon = new ImageIcon(getClass().getResource("heartred.png"));
+                    Image heartRedImage = heartRedIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                    ImageIcon smallHeartRedIcon = new ImageIcon(heartRedImage);
+                    addToFavoritesButton.setIcon(smallHeartRedIcon);
                 } else {
                     JOptionPane.showMessageDialog(CatalogueLecteur.this, "Vous devez vous connecter pour pouvoir ajouter ce livre aux favoris !");
                 }
             }
         });
+
+
         gbc.gridy = 5; // Ajouter le bouton sous les informations du livre
         bookPanel.add(addToFavoritesButton, gbc);
 
