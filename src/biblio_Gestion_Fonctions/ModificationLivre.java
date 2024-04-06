@@ -1,14 +1,13 @@
 package biblio_Gestion_Fonctions;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.io.File;
+import java.sql.*;
+import java.io.FileInputStream;
+import java.io.IOException;
 
 public class ModificationLivre extends JFrame {
     private JTextField titreField;
@@ -17,13 +16,13 @@ public class ModificationLivre extends JFrame {
     private JComboBox<String> disponibiliteComboBox;
     private JTextField datePublicationField;
     private JTextField auteurField;
+    private JLabel coverLabel; // JLabel pour afficher la couverture
+    private File selectedCover; // Fichier sélectionné pour la nouvelle couverture
 
     public ModificationLivre(int idLivre) {
         setTitle("Modifier Livre");
-        setSize(500, 400);
+        setSize(500, 500);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-
-        // Définir la disposition en BorderLayout
         setLayout(new BorderLayout());
 
         JPanel centerPanel = new JPanel();
@@ -33,25 +32,25 @@ public class ModificationLivre extends JFrame {
         String[] currentValues = getCurrentValues(idLivre);
 
         JLabel titleLabel = new JLabel("Titre:");
-        titleLabel.setHorizontalAlignment(JLabel.LEFT); // Aligner à gauche
+        titleLabel.setHorizontalAlignment(JLabel.LEFT);
         titreField = new JTextField(currentValues[0], 20);
         centerPanel.add(titleLabel);
         centerPanel.add(titreField);
 
         JLabel genreLabel = new JLabel("Genre:");
-        genreLabel.setHorizontalAlignment(JLabel.LEFT); // Aligner à gauche
+        genreLabel.setHorizontalAlignment(JLabel.LEFT);
         genreField = new JTextField(currentValues[1], 20);
         centerPanel.add(genreLabel);
         centerPanel.add(genreField);
 
         JLabel referenceLabel = new JLabel("Référence:");
-        referenceLabel.setHorizontalAlignment(JLabel.LEFT); // Aligner à gauche
+        referenceLabel.setHorizontalAlignment(JLabel.LEFT);
         referenceField = new JTextField(currentValues[2], 20);
         centerPanel.add(referenceLabel);
         centerPanel.add(referenceField);
 
         JLabel disponibiliteLabel = new JLabel("Disponibilité:");
-        disponibiliteLabel.setHorizontalAlignment(JLabel.LEFT); // Aligner à gauche
+        disponibiliteLabel.setHorizontalAlignment(JLabel.LEFT);
         String[] disponibiliteOptions = {"Disponible", "Non disponible"};
         disponibiliteComboBox = new JComboBox<>(disponibiliteOptions);
         disponibiliteComboBox.setSelectedItem(currentValues[3]);
@@ -59,16 +58,25 @@ public class ModificationLivre extends JFrame {
         centerPanel.add(disponibiliteComboBox);
 
         JLabel datePublicationLabel = new JLabel("Date de publication:");
-        datePublicationLabel.setHorizontalAlignment(JLabel.LEFT); // Aligner à gauche
+        datePublicationLabel.setHorizontalAlignment(JLabel.LEFT);
         datePublicationField = new JTextField(currentValues[4], 20);
         centerPanel.add(datePublicationLabel);
         centerPanel.add(datePublicationField);
 
         JLabel auteurLabel = new JLabel("Auteur:");
-        auteurLabel.setHorizontalAlignment(JLabel.LEFT); // Aligner à gauche
-        auteurField = new JTextField(currentValues[5] + " " + currentValues[6], 20); // Concaténer le nom et le prénom de l'auteur
+        auteurLabel.setHorizontalAlignment(JLabel.LEFT);
+        auteurField = new JTextField(currentValues[5] + " " + currentValues[6], 20);
         centerPanel.add(auteurLabel);
         centerPanel.add(auteurField);
+
+        // Bouton pour sélectionner une nouvelle couverture
+        JButton selectCoverButton = new JButton("Sélectionner une autre couverture");
+        selectCoverButton.addActionListener(e -> selectCover());
+        centerPanel.add(selectCoverButton);
+
+        // JLabel pour afficher la couverture sélectionnée
+        coverLabel = new JLabel();
+        centerPanel.add(coverLabel);
 
         add(centerPanel, BorderLayout.CENTER);
 
@@ -83,22 +91,16 @@ public class ModificationLivre extends JFrame {
         bottomPanel.add(modifyButton);
 
         JButton cancelButton = new JButton("Annuler");
-        cancelButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                dispose();
-            }
-        });
+        cancelButton.addActionListener(e -> dispose());
         bottomPanel.add(cancelButton);
 
-        add(bottomPanel, BorderLayout.SOUTH); // Ajout du panneau avec les boutons en bas de la fenêtre
+        add(bottomPanel, BorderLayout.SOUTH);
 
         setVisible(true);
     }
 
-    // Méthode pour récupérer les valeurs actuelles du livre
     private String[] getCurrentValues(int idLivre) {
-        String[] values = new String[7]; // Ajout de deux éléments pour le nom et le prénom de l'auteur
+        String[] values = new String[7];
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "")) {
             String query = "SELECT livres.titre, livres.genre, livres.ref, livres.disponibilité, livres.date_pub, auteurs.nom, auteurs.prenom FROM livres INNER JOIN auteurs ON livres.id_auteur = auteurs.id_auteur WHERE id_livre = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -110,8 +112,8 @@ public class ModificationLivre extends JFrame {
                         values[2] = resultSet.getString("ref");
                         values[3] = resultSet.getString("disponibilité");
                         values[4] = resultSet.getString("date_pub");
-                        values[5] = resultSet.getString("nom"); // Nom de l'auteur
-                        values[6] = resultSet.getString("prenom"); // Prénom de l'auteur
+                        values[5] = resultSet.getString("nom");
+                        values[6] = resultSet.getString("prenom");
                     }
                 }
             }
@@ -121,27 +123,41 @@ public class ModificationLivre extends JFrame {
         return values;
     }
 
+    private void selectCover() {
+        JFileChooser fileChooser = new JFileChooser();
+        int returnValue = fileChooser.showOpenDialog(this);
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            selectedCover = fileChooser.getSelectedFile();
+            // Affichage de la couverture sélectionnée
+            ImageIcon coverIcon = new ImageIcon(selectedCover.getAbsolutePath());
+            coverLabel.setIcon(coverIcon);
+        }
+    }
+
     private void modifierLivre(int idLivre, String nouveauTitre, String nouveauGenre, String nouvelleReference,
                                String nouvelleDisponibilite, String nouvelleDatePublication, String nouvelAuteur) {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "")) {
-            String query = "UPDATE livres SET titre = ?, genre = ?, ref = ?, disponibilité = ?, date_pub = ?, id_auteur = ? WHERE id_livre = ?";
+            String query = "UPDATE livres SET titre = ?, genre = ?, ref = ?, disponibilité = ?, date_pub = ?, id_auteur = ?, couverture = ? WHERE id_livre = ?";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, nouveauTitre);
                 statement.setString(2, nouveauGenre);
                 statement.setString(3, nouvelleReference);
-
-                // Mapping des valeurs de disponibilité
                 int disponibiliteValue = nouvelleDisponibilite.equals("Disponible") ? 1 : 0;
                 statement.setInt(4, disponibiliteValue);
-
                 statement.setString(5, nouvelleDatePublication);
                 statement.setString(6, nouvelAuteur);
-                statement.setInt(7, idLivre);
+                FileInputStream coverInputStream = new FileInputStream(selectedCover);
+                statement.setBinaryStream(7, coverInputStream);
+                statement.setInt(8, idLivre);
                 statement.executeUpdate();
             }
-        } catch (SQLException ex) {
+        } catch (SQLException | IOException ex) {
             ex.printStackTrace();
         }
     }
 
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> new ModificationLivre(1));
+    }
 }
+
