@@ -30,7 +30,7 @@ public class CatalogueLecteur extends JFrame {
         JScrollPane scrollPane = new JScrollPane(booksPanel);
         add(scrollPane, BorderLayout.CENTER);
 
-        // Panneau pour la recherche et le bouton Emprunter
+        // Panneau pour la recherche et les boutons
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Ajout de marges externes
         searchField = new JTextField(25); // Augmentation de la taille de la zone de texte
@@ -45,10 +45,26 @@ public class CatalogueLecteur extends JFrame {
         JButton empruntsWithTextButton = new JButton("Voir mes emprunts", empruntsIcon);
         empruntsWithTextButton.setHorizontalTextPosition(SwingConstants.RIGHT); // Aligner le texte à droite de l'icône
 
+        // Bouton "Mes favoris" avec une icône favoris.png
+        ImageIcon favorisIcon = new ImageIcon(getClass().getResource("favoris.png"));
+        favorisIcon = new ImageIcon(favorisIcon.getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT));
+        JButton favorisButton = new JButton("Mes favoris", favorisIcon);
+        favorisButton.setMargin(new Insets(5, 10, 5, 10)); // Augmentation des marges internes du bouton
+
+        favorisButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FavorisLecteur favorisLecteur = new FavorisLecteur();
+                favorisLecteur.setVisible(true);
+            }
+        });
+
         searchPanel.add(new JLabel("Rechercher par titre : "));
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
         searchPanel.add(empruntsWithTextButton); // Ajout du bouton des emprunts avec texte
+        searchPanel.add(Box.createHorizontalStrut(10)); // Ajout d'un espace horizontal
+        searchPanel.add(favorisButton); // Ajout du bouton "Mes favoris"
 
         add(searchPanel, BorderLayout.NORTH);
 
@@ -70,7 +86,6 @@ public class CatalogueLecteur extends JFrame {
             }
         });
 
-
         // Charger tous les livres au démarrage de l'application
         chargerTousLesLivres();
 
@@ -78,7 +93,6 @@ public class CatalogueLecteur extends JFrame {
         setLocationRelativeTo(null); // Centrer la fenêtre sur l'écran
         setVisible(true);
     }
-
     // Méthode pour rechercher des livres par titre
     private void rechercherLivresParTitre(String titre) {
         // Effacer tous les livres actuellement affichés
@@ -132,7 +146,6 @@ public class CatalogueLecteur extends JFrame {
         g2d.dispose();
         return new ImageIcon(resizedImage);
     }
-
 
     // Méthode pour afficher un livre avec une couverture redimensionnée
     private void afficherLivre(ResultSet resultSet) throws SQLException {
@@ -218,6 +231,12 @@ public class CatalogueLecteur extends JFrame {
         ImageIcon smallHeartIcon = new ImageIcon(heartImage);
         JButton addToFavoritesButton = new JButton(smallHeartIcon);
 
+        addToFavoritesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Code pour ajouter le livre aux favoris
+            }
+        });
 
         addToFavoritesButton.addActionListener(new ActionListener() {
             @Override
