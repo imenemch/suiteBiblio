@@ -1,4 +1,5 @@
 package biblio_Gestion_Lecteur;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -184,7 +185,7 @@ public class CatalogueLecteur extends JFrame {
                 int choix = JOptionPane.showConfirmDialog(CatalogueLecteur.this, "Voulez-vous emprunter ce livre ?", "Emprunter un livre", JOptionPane.YES_NO_OPTION);
                 if (choix == JOptionPane.YES_OPTION) {
                     int idUtilisateur = SessionUtilisateur.getInstance().getId_u();
-                    emprunterLivre(idLivre, idUtilisateur); // Appeler la méthode pour emprunter le livre
+                    emprunterLivre(idLivre); // Appeler la méthode pour emprunter le livre
                     JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été emprunté avec succès.");
                     chargerTousLesLivres();
                 }
@@ -196,25 +197,33 @@ public class CatalogueLecteur extends JFrame {
         booksPanel.revalidate();
     }
 
-    // Méthode pour emprunter un livre
-    public void emprunterLivre(int idLivre, int idUtilisateur) {
-        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {
-            String query = "INSERT INTO emprunts (id_u, id_livre, date_emprunt, date_retour_prevue, date_retour_effectue, penalite) VALUES (?, ?, ?, ?, NULL, 0)";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setInt(1, idUtilisateur);
-            preparedStatement.setInt(2, idLivre);
-            preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-            preparedStatement.setTimestamp(4, new Timestamp(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000))); // Date de retour prévue après une semaine
 
-            int rowsInserted = preparedStatement.executeUpdate();
-            if (rowsInserted > 0) {
-                System.out.println("L'emprunt a été ajouté avec succès.");
+    // Méthode pour emprunter un livre
+    public void emprunterLivre(int idLivre) {
+        int idUtilisateur = SessionUtilisateur.getInstance().getId_u(); // Récupérer l'ID de l'utilisateur de la session
+        if (idUtilisateur != -1) {
+            // Utiliser l'ID de l'utilisateur de la session pour l'emprunt
+            try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {
+                String query = "INSERT INTO emprunts (id_u, id_livre, date_emprunt, date_retour_prevue, date_retour_effectue, penalite) VALUES (?, ?, ?, ?, NULL, 0)";
+                PreparedStatement preparedStatement = connection.prepareStatement(query);
+                preparedStatement.setInt(1, idUtilisateur);
+                preparedStatement.setInt(2, idLivre);
+                preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+                preparedStatement.setTimestamp(4, new Timestamp(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000))); // Date de retour prévue après une semaine
+
+                int rowsInserted = preparedStatement.executeUpdate();
+                if (rowsInserted > 0) {
+                    System.out.println("L'emprunt a été ajouté avec succès.");
+                }
+                preparedStatement.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
-            preparedStatement.close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } else {
+            System.out.println("Utilisateur non connecté !");
         }
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(CatalogueLecteur::new);

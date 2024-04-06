@@ -69,6 +69,7 @@ public class CatalogueAdmin extends JFrame {
         table.getColumnModel().getColumn(5).setPreferredWidth(150); // Date de publication
         table.getColumnModel().getColumn(6).setPreferredWidth(60); // Nombre de copies
         table.getColumnModel().getColumn(7).setPreferredWidth(200); // Auteur
+        table.setRowHeight(30); // Réglage de la hauteur des lignes à 30 pixels
 
         // Ajout de la table à un JScrollPane pour permettre le défilement
         JScrollPane scrollPane = new JScrollPane(table);
