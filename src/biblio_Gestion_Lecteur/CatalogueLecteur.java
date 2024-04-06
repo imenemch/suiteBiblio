@@ -212,6 +212,23 @@ public class CatalogueLecteur extends JFrame {
             }
         });
 
+        // Ajout du bouton "Ajouter aux favoris"
+        JButton addToFavoritesButton = new JButton("Ajouter aux favoris");
+        addToFavoritesButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int idUtilisateur = SessionUtilisateur.getInstance().getId_u();
+                if (idUtilisateur != 0) {
+                    ajouterEnFavoris(idUtilisateur, idLivre); // Appeler la méthode pour ajouter le livre en favori
+                    JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été ajouté aux favoris avec succès.");
+                } else {
+                    JOptionPane.showMessageDialog(CatalogueLecteur.this, "Vous devez vous connecter pour pouvoir ajouter ce livre aux favoris !");
+                }
+            }
+        });
+        gbc.gridy = 5; // Ajouter le bouton sous les informations du livre
+        bookPanel.add(addToFavoritesButton, gbc);
+
         // Ajout du panneau du livre au panneau principal
         booksPanel.add(bookPanel);
         booksPanel.revalidate();
@@ -246,6 +263,25 @@ public class CatalogueLecteur extends JFrame {
         }
     }
 
+    // Méthode pour ajouter un livre en favori pour un utilisateur donné
+    public void ajouterEnFavoris(int idUtilisateur, int idLivre) {
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {
+            String query = "INSERT INTO favoris (id_utilisateur, id_livre) VALUES (?, ?)";
+            PreparedStatement preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setInt(1, idUtilisateur);
+            preparedStatement.setInt(2, idLivre);
+
+            int rowsInserted = preparedStatement.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("Le livre a été ajouté aux favoris avec succès.");
+            } else {
+                System.out.println("Erreur lors de l'ajout du livre aux favoris.");
+            }
+            preparedStatement.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 
 
     public static void main(String[] args) {
