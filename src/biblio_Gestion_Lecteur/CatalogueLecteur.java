@@ -32,11 +32,11 @@ public class CatalogueLecteur extends JFrame {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         searchField = new JTextField(20);
         JButton searchButton = new JButton("Rechercher");
-        JButton emprunterButton = new JButton("Emprunter");
+        JButton empruntsButton = new JButton(new ImageIcon("shopping.png"));
         searchPanel.add(new JLabel("Rechercher par titre : "));
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
-        searchPanel.add(emprunterButton);
+        searchPanel.add(empruntsButton); // Ajout du bouton des emprunts
         add(searchPanel, BorderLayout.NORTH);
 
         // Action du bouton de recherche
@@ -48,11 +48,12 @@ public class CatalogueLecteur extends JFrame {
             }
         });
 
-        // Action du bouton "Emprunter"
-        emprunterButton.addActionListener(new ActionListener() {
+        // Action du bouton des emprunts
+        empruntsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                JOptionPane.showMessageDialog(CatalogueLecteur.this, "Sélectionnez un livre en cliquant dessus pour l'emprunter.");
+                // Redirection vers la page des emprunts
+                // À implémenter
             }
         });
 
@@ -198,10 +199,9 @@ public class CatalogueLecteur extends JFrame {
     }
 
 
-    // Méthode pour emprunter un livre
     public void emprunterLivre(int idLivre) {
         int idUtilisateur = SessionUtilisateur.getInstance().getId_u(); // Récupérer l'ID de l'utilisateur de la session
-        if (idUtilisateur != -1) {
+        if (idUtilisateur != 0) {
             // Utiliser l'ID de l'utilisateur de la session pour l'emprunt
             try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {
                 String query = "INSERT INTO emprunts (id_u, id_livre, date_emprunt, date_retour_prevue, date_retour_effectue, penalite) VALUES (?, ?, ?, ?, NULL, 0)";
@@ -213,14 +213,17 @@ public class CatalogueLecteur extends JFrame {
 
                 int rowsInserted = preparedStatement.executeUpdate();
                 if (rowsInserted > 0) {
-                    System.out.println("L'emprunt a été ajouté avec succès.");
+                    JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été emprunté avec succès.");
+                    chargerTousLesLivres();
+                } else {
+                    System.out.println("Erreur lors de l'emprunt du livre.");
                 }
                 preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("Utilisateur non connecté !");
+            JOptionPane.showMessageDialog(CatalogueLecteur.this, "Vous devez vous connecter pour pouvoir emprunter ce livre !");
         }
     }
 
