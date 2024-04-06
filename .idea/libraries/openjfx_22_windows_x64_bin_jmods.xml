@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="openjfx-22_windows-x64_bin-jmods">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../../../../wamp64/openjfx-22_windows-x64_bin-jmods.zip!/javafx-jmods-22" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

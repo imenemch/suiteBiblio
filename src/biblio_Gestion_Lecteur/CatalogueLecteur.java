@@ -8,6 +8,8 @@ import java.io.*;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import biblio_Gestion_Lecteur.SessionUtilisateur;
+import biblio_Gestion_Lecteur.MesEmprunts;
+
 
 public class CatalogueLecteur extends JFrame {
     private JPanel booksPanel;
@@ -30,13 +32,24 @@ public class CatalogueLecteur extends JFrame {
 
         // Panneau pour la recherche et le bouton Emprunter
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchField = new JTextField(20);
+        searchPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Ajout de marges externes
+        searchField = new JTextField(25); // Augmentation de la taille de la zone de texte
         JButton searchButton = new JButton("Rechercher");
-        JButton empruntsButton = new JButton(new ImageIcon("shopping.png"));
+        searchButton.setMargin(new Insets(5, 10, 5, 10)); // Augmentation des marges internes du bouton
+        ImageIcon empruntsIcon = new ImageIcon(getClass().getResource("panier.png"));
+        empruntsIcon = new ImageIcon(empruntsIcon.getImage().getScaledInstance(25, 25, Image.SCALE_DEFAULT)); // Augmentation de la taille de l'icône
+        JButton empruntsButton = new JButton(empruntsIcon);
+        empruntsButton.setMargin(new Insets(5, 10, 5, 10)); // Augmentation des marges internes du bouton
+
+        // Création du bouton des emprunts avec texte
+        JButton empruntsWithTextButton = new JButton("Voir mes emprunts", empruntsIcon);
+        empruntsWithTextButton.setHorizontalTextPosition(SwingConstants.RIGHT); // Aligner le texte à droite de l'icône
+
         searchPanel.add(new JLabel("Rechercher par titre : "));
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
-        searchPanel.add(empruntsButton); // Ajout du bouton des emprunts
+        searchPanel.add(empruntsWithTextButton); // Ajout du bouton des emprunts avec texte
+
         add(searchPanel, BorderLayout.NORTH);
 
         // Action du bouton de recherche
@@ -48,14 +61,15 @@ public class CatalogueLecteur extends JFrame {
             }
         });
 
-        // Action du bouton des emprunts
-        empruntsButton.addActionListener(new ActionListener() {
+        empruntsWithTextButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Redirection vers la page des emprunts
-                // À implémenter
+                // Créer une instance de MesEmprunts et l'afficher
+                MesEmprunts mesEmprunts = new MesEmprunts();
+                mesEmprunts.setVisible(true);
             }
         });
+
 
         // Charger tous les livres au démarrage de l'application
         chargerTousLesLivres();
@@ -108,12 +122,17 @@ public class CatalogueLecteur extends JFrame {
         }
     }
 
-    // Méthode pour redimensionner une image à une taille fixe
+    // Méthode pour redimensionner une image à une taille fixe sans altérer sa qualité
     private ImageIcon redimensionnerImage(ImageIcon imageIcon, int width, int height) {
         Image image = imageIcon.getImage();
-        Image nouvelleImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-        return new ImageIcon(nouvelleImage);
+        BufferedImage resizedImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g2d = resizedImage.createGraphics();
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
+        g2d.drawImage(image, 0, 0, width, height, null);
+        g2d.dispose();
+        return new ImageIcon(resizedImage);
     }
+
 
     // Méthode pour afficher un livre avec une couverture redimensionnée
     private void afficherLivre(ResultSet resultSet) throws SQLException {

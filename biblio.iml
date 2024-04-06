@@ -25,5 +25,7 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="openjfx-22_windows-x64_bin-jmods" level="project" />
+    <orderEntry type="library" name="javaFX" level="application" />
   </component>
 </module>
