@@ -19,7 +19,7 @@ public class AjoutLivreForm extends JFrame {
     private JTextField titreField;
     private JTextField genreField;
     private JTextField refField;
-    private JTextField disponibiliteField;
+    private JComboBox<String> disponibiliteComboBox;
     private JTextField nbCopieField;
     private JComboBox<String> auteurComboBox;
     private JButton choisirImageBtn;
@@ -48,9 +48,11 @@ public class AjoutLivreForm extends JFrame {
         add(refField);
 
         JLabel disponibiliteLabel = new JLabel("Disponibilité:");
-        disponibiliteField = new JTextField();
+        disponibiliteComboBox = new JComboBox<>();
+        disponibiliteComboBox.addItem("Disponible");
+        disponibiliteComboBox.addItem("Non disponible");
         add(disponibiliteLabel);
-        add(disponibiliteField);
+        add(disponibiliteComboBox);
 
         JLabel nbCopieLabel = new JLabel("Nombre de copies:");
         nbCopieField = new JTextField();
@@ -77,7 +79,6 @@ public class AjoutLivreForm extends JFrame {
             }
         });
 
-        // Remplir la liste déroulante des auteurs
         remplirAuteurs();
 
         JButton addButton = new JButton("Ajouter");
@@ -113,23 +114,22 @@ public class AjoutLivreForm extends JFrame {
         String titre = titreField.getText().trim();
         String genre = genreField.getText().trim();
         String ref = refField.getText().trim();
-        String disponibilite = disponibiliteField.getText().trim();
+        String disponibilite = disponibiliteComboBox.getSelectedItem().toString().trim();
+        int disponibiliteValue = disponibilite.equals("Disponible") ? 1 : 0;
         String nbCopie = nbCopieField.getText().trim();
         String auteur = auteurComboBox.getSelectedItem().toString().trim();
 
-        // Ajoutez ici le code pour insérer les données dans la base de données
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "")) {
             String query = "INSERT INTO livres (titre, genre, ref, disponibilité, date_pub, nb_copie, id_auteur, couverture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 statement.setString(1, titre);
                 statement.setString(2, genre);
                 statement.setString(3, ref);
-                statement.setString(4, disponibilite);
+                statement.setInt(4, disponibiliteValue);
                 statement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
                 statement.setString(6, nbCopie);
                 int idAuteur = getIdAuteur(auteur);
                 statement.setInt(7, idAuteur);
-                // Ajouter la couverture d'image
                 if (selectedImageFile != null) {
                     FileInputStream fis = new FileInputStream(selectedImageFile);
                     statement.setBinaryStream(8, fis, (int) selectedImageFile.length());
@@ -137,6 +137,7 @@ public class AjoutLivreForm extends JFrame {
                     statement.setNull(8, java.sql.Types.BLOB);
                 }
                 statement.executeUpdate();
+
                 JOptionPane.showMessageDialog(this, "Livre ajouté avec succès !");
                 dispose();
             }
@@ -147,7 +148,7 @@ public class AjoutLivreForm extends JFrame {
     }
 
     private int getIdAuteur(String nomPrenom) {
-        int idAuteur = -1; // Valeur par défaut si l'auteur n'est pas trouvé
+        int idAuteur = -1;
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "")) {
             String[] parts = nomPrenom.split(" ");
             String nom = parts[0];

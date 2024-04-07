@@ -268,7 +268,6 @@ public class CatalogueAdmin extends JFrame {
         }
     }
 
-
     public static void main(String[] args) {
         SwingUtilities.invokeLater(CatalogueAdmin::new);
     }
