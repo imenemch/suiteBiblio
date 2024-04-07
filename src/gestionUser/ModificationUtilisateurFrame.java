@@ -12,29 +12,34 @@ public class ModificationUtilisateurFrame extends JFrame {
     private JTextField nomField;
     private JTextField prenomField;
     private JTextField emailField;
-    private User user; // Stocke les informations de l'utilisateur à modifier
+    private JComboBox<String> roleComboBox; // Liste déroulante pour le rôle
+    private User user;
 
     public ModificationUtilisateurFrame(User user) {
-        this.user = user; // Stocke les informations de l'utilisateur passé en paramètre
+        this.user = user;
 
         setTitle("Modifier Utilisateur");
         setSize(500, 400);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE); // Ferme seulement la fenêtre actuelle
-        setLayout(new GridLayout(5, 2));
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLayout(new GridLayout(6, 2));
 
-        // Création des champs de texte pour saisir les informations de l'utilisateur
         JLabel nomLabel = new JLabel("Nom :");
         nomField = new JTextField(user.getNom());
         JLabel prenomLabel = new JLabel("Prénom :");
         prenomField = new JTextField(user.getPrenom());
         JLabel emailLabel = new JLabel("Email :");
         emailField = new JTextField(user.getEmail());
+        JLabel roleLabel = new JLabel("Rôle :");
 
-        // Création des boutons
+        // Liste déroulante pour sélectionner le rôle
+        roleComboBox = new JComboBox<>();
+        roleComboBox.addItem("lecteur");
+        roleComboBox.addItem("admin");
+        roleComboBox.setSelectedItem(user.getRole());
+
         JButton modifierButton = new JButton("Modifier");
         JButton annulerButton = new JButton("Annuler");
 
-        // Ajout des listeners pour les boutons
         modifierButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -45,55 +50,52 @@ public class ModificationUtilisateurFrame extends JFrame {
         annulerButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                dispose(); // Fermer la fenêtre sans effectuer de modifications
+                dispose();
             }
         });
 
-        // Création d'un panel pour regrouper les boutons
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.add(modifierButton);
         buttonPanel.add(annulerButton);
 
-        // Ajout des composants à la fenêtre
         add(nomLabel);
         add(nomField);
         add(prenomLabel);
         add(prenomField);
         add(emailLabel);
         add(emailField);
-        add(new JLabel()); // Pour aligner correctement les composants
-        add(buttonPanel); // Ajout du panel de boutons
+        add(roleLabel);
+        add(roleComboBox); // Ajout de la liste déroulante pour le rôle
+        add(new JLabel());
+        add(buttonPanel);
 
         setVisible(true);
     }
 
     private void modifierUtilisateur() {
-        // Récupérer les valeurs modifiées
         String nom = nomField.getText().trim();
         String prenom = prenomField.getText().trim();
         String email = emailField.getText().trim();
+        String role = (String) roleComboBox.getSelectedItem(); // Récupération du rôle sélectionné
 
-        // Vérifier si les champs sont vides
         if (nom.isEmpty() || prenom.isEmpty() || email.isEmpty()) {
             JOptionPane.showMessageDialog(this,
                     "Veuillez remplir tous les champs.", "Erreur", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        // Mettre à jour les informations de l'utilisateur
         user.setNom(nom);
         user.setPrenom(prenom);
         user.setEmail(email);
+        user.setRole(role); // Mise à jour du rôle
 
-        // Mettre à jour l'utilisateur dans la base de données
         UserManager userManager = new UserManager(new Database());
         boolean updateSuccess = userManager.updateUser(user);
         if (updateSuccess) {
             JOptionPane.showMessageDialog(this,
                     "Informations utilisateur mises à jour avec succès.", "Succès", JOptionPane.INFORMATION_MESSAGE);
-            // Recharger la liste des utilisateurs après la modification
             ListeUsers.chargerTousLesUtilisateurs();
-            dispose(); // Fermer la fenêtre de modification après la mise à jour
+            dispose();
         } else {
             JOptionPane.showMessageDialog(this,
                     "Erreur lors de la mise à jour des informations de l'utilisateur.", "Erreur", JOptionPane.ERROR_MESSAGE);

@@ -112,16 +112,12 @@ public class UserManager
     }
 
     public boolean updateUser(User user) {
-        // Requête SQL pour mettre à jour les informations de l'utilisateur
         String sql = "UPDATE users SET nom = ?, prenom = ?, email = ?, role = ?, active = ? WHERE id_u = ?";
 
         try (
-                // Obtention d'une connexion à la base de données depuis l'objet Database
                 Connection conn = database.getConnection();
-                // Création d'un objet PreparedStatement pour exécuter la requête SQL
                 PreparedStatement stmt = conn.prepareStatement(sql)
         ) {
-            // Paramétrage des valeurs pour la requête SQL
             stmt.setString(1, user.getNom());
             stmt.setString(2, user.getPrenom());
             stmt.setString(3, user.getEmail());
@@ -129,14 +125,11 @@ public class UserManager
             stmt.setInt(5, user.getActive());
             stmt.setInt(6, user.getId());
 
-            // Exécution de la requête SQL
             int rowsAffected = stmt.executeUpdate();
-
-            // Vérification si la mise à jour a été réussie
             return rowsAffected > 0;
         } catch (SQLException e) {
             e.printStackTrace();
-            return false; // En cas d'erreur, retourner false
+            return false;
         }
     }
 
