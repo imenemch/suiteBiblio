@@ -270,23 +270,49 @@ public class CatalogueLecteur extends JFrame {
     public void emprunterLivre(int idLivre) {
         int idUtilisateur = SessionUtilisateur.getInstance().getId_u(); // Récupérer l'ID de l'utilisateur de la session
         if (idUtilisateur != 0) {
-            // Utiliser l'ID de l'utilisateur de la session pour l'emprunt
             try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {
-                String query = "INSERT INTO emprunts (id_u, id_livre, date_emprunt, date_retour_prevue, date_retour_effectue, penalite) VALUES (?, ?, ?, ?, NULL, 0)";
-                PreparedStatement preparedStatement = connection.prepareStatement(query);
-                preparedStatement.setInt(1, idUtilisateur);
-                preparedStatement.setInt(2, idLivre);
-                preparedStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
-                preparedStatement.setTimestamp(4, new Timestamp(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000))); // Date de retour prévue après une semaine
+                // Vérifier la disponibilité du livre
+                String checkAvailabilityQuery = "SELECT disponibilité, nb_copie FROM livres WHERE id_livre = ?";
+                PreparedStatement checkAvailabilityStatement = connection.prepareStatement(checkAvailabilityQuery);
+                checkAvailabilityStatement.setInt(1, idLivre);
+                ResultSet availabilityResultSet = checkAvailabilityStatement.executeQuery();
+                if (availabilityResultSet.next()) {
+                    boolean disponibilite = availabilityResultSet.getBoolean("disponibilité");
+                    int nbCopies = availabilityResultSet.getInt("nb_copie");
+                    if (disponibilite && nbCopies > 0) { // Si le livre est disponible et il y a au moins une copie disponible
+                        // Effectuer l'emprunt
+                        String insertEmpruntQuery = "INSERT INTO emprunts (id_u, id_livre, date_emprunt, date_retour_prevue, date_retour_effectue, penalite) VALUES (?, ?, ?, ?, NULL, 0)";
+                        PreparedStatement insertEmpruntStatement = connection.prepareStatement(insertEmpruntQuery);
+                        insertEmpruntStatement.setInt(1, idUtilisateur);
+                        insertEmpruntStatement.setInt(2, idLivre);
+                        insertEmpruntStatement.setTimestamp(3, new Timestamp(System.currentTimeMillis()));
+                        insertEmpruntStatement.setTimestamp(4, new Timestamp(System.currentTimeMillis() + (7 * 24 * 60 * 60 * 1000))); // Date de retour prévue après une semaine
+                        int rowsInserted = insertEmpruntStatement.executeUpdate();
+                        if (rowsInserted > 0) {
+                            // Soustraire une copie du nombre total de copies disponibles
+                            String updateCopiesQuery = "UPDATE livres SET nb_copie = ? WHERE id_livre = ?";
+                            PreparedStatement updateCopiesStatement = connection.prepareStatement(updateCopiesQuery);
+                            updateCopiesStatement.setInt(1, nbCopies - 1);
+                            updateCopiesStatement.setInt(2, idLivre);
+                            updateCopiesStatement.executeUpdate();
 
-                int rowsInserted = preparedStatement.executeUpdate();
-                if (rowsInserted > 0) {
-                    JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été emprunté avec succès.");
-                    chargerTousLesLivres();
+                            // Mettre à jour la disponibilité du livre dans la base de données
+                            String updateAvailabilityQuery = "UPDATE livres SET disponibilité = 0 WHERE id_livre = ?";
+                            PreparedStatement updateAvailabilityStatement = connection.prepareStatement(updateAvailabilityQuery);
+                            updateAvailabilityStatement.setInt(1, idLivre);
+                            updateAvailabilityStatement.executeUpdate();
+
+                            JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été emprunté avec succès.");
+                            chargerTousLesLivres();
+                        } else {
+                            System.out.println("Erreur lors de l'emprunt du livre.");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(CatalogueLecteur.this, "Ce livre n'est pas disponible pour l'emprunt.");
+                    }
                 } else {
-                    System.out.println("Erreur lors de l'emprunt du livre.");
+                    System.out.println("Livre non trouvé.");
                 }
-                preparedStatement.close();
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -294,6 +320,7 @@ public class CatalogueLecteur extends JFrame {
             JOptionPane.showMessageDialog(CatalogueLecteur.this, "Vous devez vous connecter pour pouvoir emprunter ce livre !");
         }
     }
+
 
     // Méthode pour ajouter un livre en favori pour un utilisateur donné
     public void ajouterEnFavoris(int idUtilisateur, int idLivre) {
