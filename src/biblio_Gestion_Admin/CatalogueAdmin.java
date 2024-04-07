@@ -128,17 +128,18 @@ public class CatalogueAdmin extends JFrame {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
                 int idLivre = (int) table.getValueAt(selectedRow, 0);
-                new biblio_Gestion_Fonctions.ModificationLivre(idLivre);
+                new biblio_Gestion_Fonctions.ModificationLivre(idLivre, this); // Passer une référence à l'instance de CatalogueAdmin
             } else {
                 JOptionPane.showMessageDialog(this, "Veuillez sélectionner un livre à modifier.");
             }
         });
 
+
         buttonSupp.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
                 int idLivre = (int) table.getValueAt(selectedRow, 0);
-                supprimerLivre(idLivre);
+                supprimerLivre(idLivre, selectedRow);
             } else {
                 JOptionPane.showMessageDialog(this, "Veuillez sélectionner un livre à supprimer.");
             }
@@ -216,11 +217,15 @@ public class CatalogueAdmin extends JFrame {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+
+        // Rafraîchissement de l'interface après chargement des livres
+        model.fireTableDataChanged();
     }
 
-    private void supprimerLivre(int idLivre) {
+    private void supprimerLivre(int idLivre, int row) {
         biblio_Gestion_Fonctions.SuppressionLivre.supprimer(idLivre);
-        chargerTousLesLivres();
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        model.removeRow(row); // Suppression de la ligne dans le modèle de table
     }
 
     // Méthode pour créer une ImageIcon à partir de données binaires
@@ -243,6 +248,21 @@ public class CatalogueAdmin extends JFrame {
             return label;
         }
     }
+// pouvoir rafraichir la page
+public void updateRowInTable(int row, Object[] rowData) {
+    DefaultTableModel model = (DefaultTableModel) table.getModel();
+    model.setValueAt(rowData[0], row, 0);
+    model.setValueAt(rowData[1], row, 1);
+    model.setValueAt(rowData[2], row, 2);
+    model.setValueAt(rowData[3], row, 3);
+    model.setValueAt(rowData[4], row, 4);
+    model.setValueAt(rowData[5], row, 5);
+    model.setValueAt(rowData[6], row, 6);
+    model.setValueAt(rowData[7], row, 7);
+    model.setValueAt(rowData[8], row, 8);
+    model.fireTableRowsUpdated(row, row); // Rafraîchissement de la ligne modifiée
+}
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(CatalogueAdmin::new);
