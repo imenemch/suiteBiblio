@@ -14,7 +14,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
-
+import java.util.ArrayList;
+import java.util.Collections;
 public class AjoutLivreForm extends JFrame {
     private JTextField titreField;
     private JTextField genreField;
@@ -99,16 +100,32 @@ public class AjoutLivreForm extends JFrame {
             String query = "SELECT nom, prenom FROM auteurs";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
                 ResultSet resultSet = statement.executeQuery();
+
+                // Créer une liste pour stocker les noms des auteurs
+                ArrayList<String> auteurs = new ArrayList<>();
+
                 while (resultSet.next()) {
                     String nom = resultSet.getString("nom");
                     String prenom = resultSet.getString("prenom");
-                    auteurComboBox.addItem(nom + " " + prenom);
+                    auteurs.add(nom + " " + prenom);
+                }
+
+                // Trier les noms des auteurs par ordre alphabétique
+                Collections.sort(auteurs);
+
+                // Effacer les anciens éléments de la JComboBox
+                auteurComboBox.removeAllItems();
+
+                // Ajouter les noms triés à la JComboBox
+                for (String auteur : auteurs) {
+                    auteurComboBox.addItem(auteur);
                 }
             }
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
     }
+
 
     private void ajouterLivre() {
         String titre = titreField.getText().trim();
@@ -167,6 +184,7 @@ public class AjoutLivreForm extends JFrame {
         }
         return idAuteur;
     }
+
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AjoutLivreForm::new);
