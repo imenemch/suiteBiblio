@@ -25,6 +25,8 @@ public class AjoutLivreForm extends JFrame {
     private JComboBox<String> auteurComboBox;
     private JButton choisirImageBtn;
 
+    private JLabel ajouterAuteurLabel;
+
     private File selectedImageFile;
 
     public AjoutLivreForm() {
@@ -69,6 +71,7 @@ public class AjoutLivreForm extends JFrame {
         add(new JLabel("Image de couverture:"));
         add(choisirImageBtn);
 
+
         choisirImageBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -91,9 +94,32 @@ public class AjoutLivreForm extends JFrame {
                 ajouterLivre();
             }
         });
+// Label pour l'ajout d'auteur
+        ajouterAuteurLabel = new JLabel("<html><u>Si l'auteur n'existe pas dans la liste. Cliquez ici pour l'ajouter</u></html>");
+        ajouterAuteurLabel.setForeground(Color.BLUE); // Couleur bleue pour le lien cliquable
+        add(ajouterAuteurLabel);
 
+        // Ajout d'un ActionListener pour détecter les clics sur le label d'ajout d'auteur
+        ajouterAuteurLabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                // Redirection vers la page d'ajout d'auteur
+                ouvrirPageAjoutAuteur();
+            }
+        });
         setVisible(true);
     }
+    private void ouvrirPageAjoutAuteur() {
+        // Ouvrir la page d'ajout d'auteur
+        Connection connexion = null;
+        try {
+            connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "");
+            new biblio_Gestion_Fonctions.AjouterAuteur(connexion);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Erreur lors de la connexion à la base de données : " + e.getMessage());
+        }
+    }
+
 
     private void remplirAuteurs() {
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "")) {
@@ -184,7 +210,24 @@ public class AjoutLivreForm extends JFrame {
         }
         return idAuteur;
     }
-
+    // Méthode pour vérifier si l'auteur existe déjà dans la base de données
+    private boolean isAuteurExistant(String auteur) {
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "")) {
+            String[] parts = auteur.split(" ");
+            String nom = parts[0];
+            String prenom = parts[1];
+            String query = "SELECT * FROM auteurs WHERE nom = ? AND prenom = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setString(1, nom);
+                statement.setString(2, prenom);
+                ResultSet resultSet = statement.executeQuery();
+                return resultSet.next();
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
+        }
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(AjoutLivreForm::new);
