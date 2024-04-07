@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Date;
+import javax.swing.JComboBox;
 
 public class AjouterLivre {
     private Connection connexion;
@@ -28,7 +29,7 @@ public class AjouterLivre {
     }
 
     // Méthode pour ajouter un livre à la base de données
-    public boolean ajouterLivre(String titre, String genre, String ref, boolean disponibilite, Date datePub, int nbCopie, int idAuteur) {
+    public boolean ajouterLivre(String titre, String genre, String ref, String disponibilite, Date datePub, int nbCopie, int idAuteur) {
         // Obtention de la connexion à la base de données
         connexion = obtenirConnexion();
         if (connexion == null) {
@@ -37,14 +38,14 @@ public class AjouterLivre {
 
         try {
             // Préparation de la requête SQL
-            String sql = "INSERT INTO livres (titre, genre, ref, disponibilité, date_pub, nb_copie, id_auteur) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            String sql = "INSERT INTO livres (titre, genre, ref, disponibilite, date_pub, nb_copie, id_auteur) VALUES (?, ?, ?, ?, ?, ?, ?)";
             PreparedStatement statement = connexion.prepareStatement(sql);
 
             // Attribution des valeurs aux paramètres de la requête
             statement.setString(1, titre);
             statement.setString(2, genre);
             statement.setString(3, ref);
-            statement.setBoolean(4, disponibilite);
+            statement.setString(4, disponibilite); // Utilisation de la disponibilité en tant que chaîne de caractères
             statement.setDate(5, new java.sql.Date(datePub.getTime())); // Conversion de java.util.Date à java.sql.Date
             statement.setInt(6, nbCopie);
             statement.setInt(7, idAuteur);
@@ -86,7 +87,7 @@ public class AjouterLivre {
             AjouterLivre gestionLivres = new AjouterLivre(connexion);
 
             // Exemple d'ajout d'un livre
-            gestionLivres.ajouterLivre("Titre du livre", "Genre du livre", "REF001", true, new Date(), 5, 1);
+            gestionLivres.ajouterLivre("Titre du livre", "Genre du livre", "REF001", "Disponible", new Date(), 5, 1);
         } catch (SQLException e) {
             System.out.println("Erreur lors de la connexion à la base de données : " + e.getMessage());
         } finally {
