@@ -162,6 +162,12 @@ public class AjoutLivreForm extends JFrame {
         String nbCopie = nbCopieField.getText().trim();
         String auteur = auteurComboBox.getSelectedItem().toString().trim();
 
+        // Vérifier si tous les champs sont remplis
+        if (titre.isEmpty() || genre.isEmpty() || ref.isEmpty() || nbCopie.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Tous les champs sont obligatoires.");
+            return; // Sortir de la méthode si un champ obligatoire n'est pas rempli
+        }
+
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "")) {
             String query = "INSERT INTO livres (titre, genre, ref, disponibilité, date_pub, nb_copie, id_auteur, couverture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
             try (PreparedStatement statement = connection.prepareStatement(query)) {
@@ -189,6 +195,7 @@ public class AjoutLivreForm extends JFrame {
             JOptionPane.showMessageDialog(this, "Erreur lors de l'ajout du livre : " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
+
 
     private int getIdAuteur(String nomPrenom) {
         int idAuteur = -1;
