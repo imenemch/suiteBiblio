@@ -87,6 +87,7 @@ public class CatalogueAdmin extends JFrame {
         JButton buttonSupp = new JButton(deleteIcon);
         JButton buttonAdd = new JButton(addIcon);
         JButton buttonRetour = new JButton(backIcon);
+        JButton buttonListeUsers = new JButton("Liste Utilisateurs"); // Nouveau bouton
 
         Insets buttonInsets = new Insets(5, 10, 5, 10);
         searchButton.setMargin(buttonInsets);
@@ -94,11 +95,14 @@ public class CatalogueAdmin extends JFrame {
         buttonSupp.setMargin(buttonInsets);
         buttonAdd.setMargin(buttonInsets);
         buttonRetour.setMargin(buttonInsets);
+        buttonListeUsers.setMargin(buttonInsets); // Appliquer les marges au nouveau bouton
 
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         buttonPanel.add(buttonEdit);
         buttonPanel.add(buttonSupp);
         buttonPanel.add(buttonAdd);
+        buttonPanel.add(buttonListeUsers); // Ajouter le nouveau bouton au panneau
+        buttonPanel.add(buttonRetour);
 
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         searchPanel.add(new JLabel("Rechercher par titre : "));
@@ -134,7 +138,6 @@ public class CatalogueAdmin extends JFrame {
             }
         });
 
-
         buttonSupp.addActionListener(e -> {
             int selectedRow = table.getSelectedRow();
             if (selectedRow != -1) {
@@ -148,6 +151,12 @@ public class CatalogueAdmin extends JFrame {
         buttonAdd.addActionListener(e -> {
             new AjoutLivreForm();
         });
+
+        buttonListeUsers.addActionListener(e -> {
+            dispose(); // Ferme la fenêtre actuelle (CatalogueAdmin)
+            new ListeUsers(); // Ouvre la liste des utilisateurs dans une nouvelle fenêtre
+        });
+
 
         // Appliquez le rendu personnalisé pour afficher les images dans la table
         table.getColumnModel().getColumn(8).setCellRenderer(new ImageRenderer());
@@ -248,6 +257,7 @@ public class CatalogueAdmin extends JFrame {
             return label;
         }
     }
+
     // pouvoir rafraichir la page
     public void updateRowInTable(int idLivre, Object[] rowData) {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
@@ -262,7 +272,6 @@ public class CatalogueAdmin extends JFrame {
             }
         }
     }
-
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(CatalogueAdmin::new);

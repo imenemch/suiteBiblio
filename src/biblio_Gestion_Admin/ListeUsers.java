@@ -9,6 +9,8 @@ import gestionUser.UserManager;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.List;
 
 public class ListeUsers extends JFrame {
@@ -17,7 +19,7 @@ public class ListeUsers extends JFrame {
 
     public ListeUsers() {
         setTitle("Liste des Utilisateurs");
-        setSize(600, 400);
+        setSize(2000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -28,6 +30,20 @@ public class ListeUsers extends JFrame {
         JButton editButton = new JButton("Modifier");
         JButton deleteButton = new JButton("Supprimer");
 
+        // Création du lien vers CatalogueAdmin
+        JLabel linkCatalogue = new JLabel("Accéder au Catalogue Admin");
+        linkCatalogue.setForeground(Color.BLUE);
+        linkCatalogue.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        linkCatalogue.setHorizontalAlignment(SwingConstants.LEFT); // Modification de l'alignement à gauche
+        linkCatalogue.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                // Redirection vers la page CatalogueAdmin lors du clic sur le lien
+                new CatalogueAdmin();
+                dispose(); // Fermer la fenêtre actuelle
+            }
+        });
+
         // Ajout des actions aux boutons
         searchButton.addActionListener(e -> rechercherUtilisateur());
         addButton.addActionListener(e -> ajouterUtilisateur());
@@ -35,7 +51,9 @@ public class ListeUsers extends JFrame {
         deleteButton.addActionListener(e -> supprimerUtilisateur());
 
         // Création du panneau de navigation
-        JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JPanel navPanel = new JPanel(new FlowLayout(FlowLayout.LEFT)); // Alignement à gauche
+        navPanel.add(linkCatalogue); // Ajout du lien vers CatalogueAdmin
+        navPanel.add(Box.createHorizontalStrut(20)); // Ajout de l'espace horizontal
         navPanel.add(searchField);
         navPanel.add(searchButton);
         navPanel.add(addButton);
