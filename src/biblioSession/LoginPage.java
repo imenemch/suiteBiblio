@@ -66,8 +66,17 @@ public class LoginPage extends JFrame implements ActionListener {
             int userId = userDAO.getUserId(email, hashedPassword); // Récupérer l'ID de l'utilisateur
 
             if (userId != -1) { // Vérifier si l'identifiant de l'utilisateur est valide
-                CatalogueLecteur catalogueLecteur = new CatalogueLecteur();
-                catalogueLecteur.startSession(userId); // Démarrer la session avec l'idUtilisateur
+                String userRole = userDAO.getUserRole(email); // Obtenir le rôle de l'utilisateur
+
+                if (userRole.equals("admin")) {
+                    // Rediriger vers la page du catalogue de l'administrateur
+                    new biblio_Gestion_Admin.CatalogueAdmin();
+                } else if (userRole.equals("lecteur")) {
+                    // Rediriger vers la page du catalogue du lecteur
+                    CatalogueLecteur catalogueLecteur = new CatalogueLecteur();
+                    catalogueLecteur.startSession(userId); // Démarrer la session avec l'idUtilisateur
+                }
+
                 dispose(); // Fermer la fenêtre de connexion
             } else {
                 JOptionPane.showMessageDialog(this, "Identifiants incorrects", "Erreur", JOptionPane.ERROR_MESSAGE);
