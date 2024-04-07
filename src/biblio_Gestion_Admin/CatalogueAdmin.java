@@ -253,15 +253,10 @@ public class CatalogueAdmin extends JFrame {
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         for (int row = 0; row < model.getRowCount(); row++) {
             if ((int) model.getValueAt(row, 0) == idLivre) {
-                model.setValueAt(rowData[0], row, 0);
-                model.setValueAt(rowData[1], row, 1);
-                model.setValueAt(rowData[2], row, 2);
-                model.setValueAt(rowData[3], row, 3);
-                model.setValueAt(rowData[4], row, 4);
-                model.setValueAt(rowData[5], row, 5);
-                model.setValueAt(rowData[6], row, 6);
-                model.setValueAt(rowData[7], row, 7);
-                model.setValueAt(rowData[8], row, 8);
+                int length = Math.min(rowData.length, model.getColumnCount()); // Prendre la longueur minimale
+                for (int col = 0; col < length; col++) {
+                    model.setValueAt(rowData[col], row, col);
+                }
                 model.fireTableRowsUpdated(row, row);
                 break;
             }
