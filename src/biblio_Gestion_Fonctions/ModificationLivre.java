@@ -144,11 +144,14 @@ public class ModificationLivre extends JFrame {
             Object[] newData = {idLivre, nouveauTitre, nouveauGenre, nouvelleReference, nouvelleDisponibilite, nouvelleDatePublication, nouvelAuteur}; // Créez un tableau d'objets contenant les nouvelles données du livre modifié
             catalogueAdmin.updateRowInTable(idLivre, newData); // Appelez la méthode updateRowInTable pour mettre à jour la ligne correspondante dans la table
 
+            // Afficher un message de réussite
+            JOptionPane.showMessageDialog(this, "Le livre a été modifié avec succès.");
+
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
-
     }
+
     private int getIdAuteur(String nomPrenomAuteur) {
         String[] parts = nomPrenomAuteur.split(" ");
         String nom = parts[0];

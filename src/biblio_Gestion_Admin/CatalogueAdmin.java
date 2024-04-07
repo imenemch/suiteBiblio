@@ -248,20 +248,25 @@ public class CatalogueAdmin extends JFrame {
             return label;
         }
     }
-// pouvoir rafraichir la page
-public void updateRowInTable(int row, Object[] rowData) {
-    DefaultTableModel model = (DefaultTableModel) table.getModel();
-    model.setValueAt(rowData[0], row, 0);
-    model.setValueAt(rowData[1], row, 1);
-    model.setValueAt(rowData[2], row, 2);
-    model.setValueAt(rowData[3], row, 3);
-    model.setValueAt(rowData[4], row, 4);
-    model.setValueAt(rowData[5], row, 5);
-    model.setValueAt(rowData[6], row, 6);
-    model.setValueAt(rowData[7], row, 7);
-    model.setValueAt(rowData[8], row, 8);
-    model.fireTableRowsUpdated(row, row); // Rafraîchissement de la ligne modifiée
-}
+    // pouvoir rafraichir la page
+    public void updateRowInTable(int idLivre, Object[] rowData) {
+        DefaultTableModel model = (DefaultTableModel) table.getModel();
+        for (int row = 0; row < model.getRowCount(); row++) {
+            if ((int) model.getValueAt(row, 0) == idLivre) {
+                model.setValueAt(rowData[0], row, 0);
+                model.setValueAt(rowData[1], row, 1);
+                model.setValueAt(rowData[2], row, 2);
+                model.setValueAt(rowData[3], row, 3);
+                model.setValueAt(rowData[4], row, 4);
+                model.setValueAt(rowData[5], row, 5);
+                model.setValueAt(rowData[6], row, 6);
+                model.setValueAt(rowData[7], row, 7);
+                model.setValueAt(rowData[8], row, 8);
+                model.fireTableRowsUpdated(row, row);
+                break;
+            }
+        }
+    }
 
 
     public static void main(String[] args) {
