@@ -256,6 +256,16 @@ public class CatalogueLecteur extends JFrame {
         ImageIcon smallHeartIcon = new ImageIcon(heartImage);
         JButton addToFavoritesButton = new JButton(smallHeartIcon);
 
+        // Vérifier si le livre est déjà dans les favoris de l'utilisateur
+        int idUtilisateur = SessionUtilisateur.getInstance().getId_u();
+        boolean isFavorite = checkIfFavorite(idUtilisateur, idLivre);
+        if(isFavorite) {
+            // Si le livre est déjà un favori, changer l'icône du bouton en "heartred.png"
+            ImageIcon heartRedIcon = new ImageIcon(getClass().getResource("heartred.png"));
+            Image heartRedImage = heartRedIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+            ImageIcon smallHeartRedIcon = new ImageIcon(heartRedImage);
+            addToFavoritesButton.setIcon(smallHeartRedIcon);
+        }
         addToFavoritesButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -364,6 +374,44 @@ public class CatalogueLecteur extends JFrame {
             preparedStatement.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+    }
+    //methode pour retirer le coeur rouge apres l'avoir retiré de la liste des favoris
+    public void chargerFavoris() {
+        // Effacer tous les livres actuellement affichés
+        booksPanel.removeAll();
+        booksPanel.revalidate();
+        booksPanel.repaint();
+
+        // Connexion à la base de données et récupération des favoris de l'utilisateur connecté
+        int idUtilisateur = SessionUtilisateur.getInstance().getId_u();
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {
+            String query = "SELECT livres.* FROM livres INNER JOIN favoris ON livres.id_livre = favoris.id_livre WHERE favoris.id_utilisateur = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, idUtilisateur);
+                ResultSet resultSet = statement.executeQuery();
+                while (resultSet.next()) {
+                    afficherLivre(resultSet);
+                }
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    // Méthode pour vérifier si un livre est un favori de l'utilisateur
+    private boolean checkIfFavorite(int idUtilisateur, int idLivre) {
+        try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost/bibliotech", "root", "")) {
+            String query = "SELECT * FROM favoris WHERE id_utilisateur = ? AND id_livre = ?";
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.setInt(1, idUtilisateur);
+                statement.setInt(2, idLivre);
+                ResultSet resultSet = statement.executeQuery();
+                return resultSet.next(); // Renvoie true si le livre est un favori, false sinon
+            }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            return false;
         }
     }
 

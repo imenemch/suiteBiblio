@@ -103,6 +103,10 @@ public class FavorisLecteur extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 retirerDesFavoris(idLivre);
                 chargerFavoris(); // Recharger la liste des favoris après avoir retiré un favori
+                // Mettre à jour l'affichage des favoris dans le catalogue
+                if (getParent() instanceof CatalogueLecteur) {
+                    ((CatalogueLecteur) getParent()).chargerFavoris();
+                }
             }
         });
         gbc.gridy = 2;
