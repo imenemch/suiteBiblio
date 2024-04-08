@@ -16,6 +16,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+
 public class AjoutLivreForm extends JFrame {
     private JTextField titreField;
     private JTextField genreField;
@@ -71,7 +72,6 @@ public class AjoutLivreForm extends JFrame {
         add(new JLabel("Image de couverture:"));
         add(choisirImageBtn);
 
-
         choisirImageBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -94,7 +94,8 @@ public class AjoutLivreForm extends JFrame {
                 ajouterLivre();
             }
         });
-// Label pour l'ajout d'auteur
+
+        // Label pour l'ajout d'auteur
         ajouterAuteurLabel = new JLabel("<html><u>Si l'auteur n'existe pas dans la liste. Cliquez ici pour l'ajouter</u></html>");
         ajouterAuteurLabel.setForeground(Color.BLUE); // Couleur bleue pour le lien cliquable
         add(ajouterAuteurLabel);
@@ -106,14 +107,18 @@ public class AjoutLivreForm extends JFrame {
                 ouvrirPageAjoutAuteur();
             }
         });
+
         setVisible(true);
     }
+
     private void ouvrirPageAjoutAuteur() {
         // Ouvrir la page d'ajout d'auteur
         Connection connexion = null;
         try {
             connexion = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "");
             new biblio_Gestion_Fonctions.AjouterAuteur(connexion);
+            // Après avoir ajouté un nouvel auteur, remplir à nouveau la liste des auteurs
+            remplirAuteurs();
         } catch (SQLException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Erreur lors de la connexion à la base de données : " + e.getMessage());
@@ -152,7 +157,6 @@ public class AjoutLivreForm extends JFrame {
         }
     }
 
-
     private void ajouterLivre() {
         String titre = titreField.getText().trim();
         String genre = genreField.getText().trim();
@@ -161,12 +165,6 @@ public class AjoutLivreForm extends JFrame {
         int disponibiliteValue = disponibilite.equals("Disponible") ? 1 : 0;
         String nbCopie = nbCopieField.getText().trim();
         String auteur = auteurComboBox.getSelectedItem().toString().trim();
-
-        // Vérifier si tous les champs sont remplis
-        if (titre.isEmpty() || genre.isEmpty() || ref.isEmpty() || nbCopie.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Tous les champs sont obligatoires.");
-            return; // Sortir de la méthode si un champ obligatoire n'est pas rempli
-        }
 
         try (Connection connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/bibliotech", "root", "")) {
             String query = "INSERT INTO livres (titre, genre, ref, disponibilité, date_pub, nb_copie, id_auteur, couverture) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -195,7 +193,6 @@ public class AjoutLivreForm extends JFrame {
             JOptionPane.showMessageDialog(this, "Erreur lors de l'ajout du livre : " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
         }
     }
-
 
     private int getIdAuteur(String nomPrenom) {
         int idAuteur = -1;
