@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import biblio_Gestion_Lecteur.CatalogueLecteur;
 public class MainPage extends JFrame {
     public MainPage() {
         setTitle("Bibliothèque en ligne");
@@ -50,8 +50,9 @@ public class MainPage extends JFrame {
         browseBooksButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // Redirection vers la page catalogueLecteur du package biblio_Gestion_Lecteur
-                //new biblio_Gestion_Lecteur();
+                // Redirection vers la page CatalogueLecteur du package biblio_Gestion_Lecteur
+                CatalogueLecteur catalogue = new CatalogueLecteur(); // Création de l'instance de CatalogueLecteur
+                catalogue.setVisible(true); // Rendre la fenêtre visible
                 dispose(); // Fermer la fenêtre principale
             }
         });
