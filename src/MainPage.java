@@ -16,10 +16,12 @@ public class MainPage extends JFrame {
         JButton browseBooksButton = new JButton("Parcourir les livres");
         navPanel.add(browseBooksButton);
 
-        // Vidéo
-        JPanel videoPanel = new JPanel(new BorderLayout());
-        JLabel videoLabel = new JLabel(new ImageIcon("src/video.mp4")); // Remplacez "path_to_your_video_file" par le chemin de votre fichier vidéo
-        videoPanel.add(videoLabel, BorderLayout.CENTER);
+        // Image centrale
+        ImageIcon imageIcon = new ImageIcon(getClass().getResource("/biblioSession/accueil.png"));
+        JLabel imageLabel = new JLabel(imageIcon);
+        imageLabel.setPreferredSize(new Dimension(600, 400)); // Taille préférée pour l'image
+        JPanel imagePanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        imagePanel.add(imageLabel);
 
         // Call-to-action
         JPanel ctaPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -31,7 +33,7 @@ public class MainPage extends JFrame {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(navPanel);
         mainPanel.add(Box.createVerticalStrut(20)); // Espace vertical
-        mainPanel.add(videoPanel); // Ajout de la vidéo
+        mainPanel.add(imagePanel); // Ajout de l'image centrale
         mainPanel.add(Box.createVerticalStrut(20)); // Espace vertical
         mainPanel.add(ctaPanel);
 
@@ -48,6 +50,7 @@ public class MainPage extends JFrame {
                 dispose(); // Fermer la fenêtre principale
             }
         });
+
         // Gestionnaire d'événements pour le bouton "Inscrivez-vous maintenant"
         signUpButton.addActionListener(new ActionListener() {
             @Override
