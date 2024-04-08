@@ -239,9 +239,13 @@ public class CatalogueLecteur extends JFrame {
                 int choix = JOptionPane.showConfirmDialog(CatalogueLecteur.this, "Voulez-vous emprunter ce livre ?", "Emprunter un livre", JOptionPane.YES_NO_OPTION);
                 if (choix == JOptionPane.YES_OPTION) {
                     int idUtilisateur = SessionUtilisateur.getInstance().getId_u();
-                    emprunterLivre(idLivre); // Appeler la méthode pour emprunter le livre
-                    JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été emprunté avec succès.");
-                    chargerTousLesLivres();
+                    if (idUtilisateur != 0) { // Vérifier si l'utilisateur est connecté
+                        emprunterLivre(idLivre); // Appeler la méthode pour emprunter le livre
+                        JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été emprunté avec succès.");
+                        chargerTousLesLivres();
+                    } else {
+                        JOptionPane.showMessageDialog(CatalogueLecteur.this, "Vous devez vous connecter pour pouvoir emprunter ce livre !");
+                    }
                 }
             }
         });
