@@ -147,8 +147,9 @@ public class CatalogueAdmin extends JFrame {
         });
 
         buttonAdd.addActionListener(e -> {
-            new AjoutLivreForm();
+            new AjoutLivreForm(this);
         });
+
 
 
         // Appliquez le rendu personnalisé pour afficher les images dans la table
@@ -263,6 +264,9 @@ public class CatalogueAdmin extends JFrame {
                 break;
             }
         }
+    }
+    public void updateTable() {
+        chargerTousLesLivres();
     }
 
     public static void main(String[] args) {

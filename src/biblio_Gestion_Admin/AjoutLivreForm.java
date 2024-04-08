@@ -10,7 +10,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
-
+import biblio_Gestion_Admin.CatalogueAdmin;
 public class AjoutLivreForm extends JFrame {
     private JTextField titreField;
     private JTextField genreField;
@@ -23,8 +23,10 @@ public class AjoutLivreForm extends JFrame {
     private JLabel ajouterAuteurLabel;
 
     private File selectedImageFile;
+    private  CatalogueAdmin catalogueAdmin;
 
-    public AjoutLivreForm() {
+    public AjoutLivreForm(CatalogueAdmin catalogueAdmin) {
+        this.catalogueAdmin = catalogueAdmin;
         setTitle("Ajouter un Livre");
         setSize(400, 350);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
@@ -176,6 +178,7 @@ public class AjoutLivreForm extends JFrame {
                 statement.executeUpdate();
 
                 JOptionPane.showMessageDialog(this, "Livre ajouté avec succès !");
+                catalogueAdmin.updateTable();
                 dispose();
             }
         } catch (SQLException | IOException ex) {
@@ -222,8 +225,9 @@ public class AjoutLivreForm extends JFrame {
             return false;
         }
     }
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(AjoutLivreForm::new);
+        CatalogueAdmin catalogueAdmin = new CatalogueAdmin();
+        SwingUtilities.invokeLater(() -> new AjoutLivreForm(catalogueAdmin));
     }
+
 }
