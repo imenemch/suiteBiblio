@@ -1,75 +1,85 @@
 package biblioSession;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import javax.swing.*;
+import java.sql.*;
 
 public class RegisterPage extends JFrame implements ActionListener {
-    private JLabel labelNom, labelPrenom, labelEmail, labelPassword, labelLogin;
     private JTextField textNom, textPrenom, textEmail;
     private JPasswordField textPassword;
-    private JButton buttonRegister; // Bouton pour s'inscrire
+    private JButton buttonRegister;
 
     public RegisterPage() {
         setTitle("Inscription");
-        setSize(400, 350); // Ajustement de la hauteur pour accommoder le bouton
+        setSize(600, 550);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // Centrer la fenêtre
 
-        // Utilisation d'un JPanel pour une meilleure organisation de la mise en page
-        JPanel panel = new JPanel(new GridLayout(6, 2, 10, 10)); // GridLayout avec espacement horizontal et vertical
-        panel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10)); // Ajout de marges
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
-        labelNom = new JLabel("Nom :");
-        panel.add(labelNom);
+        // Panel supérieur pour le logo et le sous-titre
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+
+        // Logo
+        ImageIcon logoIcon = new ImageIcon("src/biblioSession/logo.png");
+        Image img = logoIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH);
+        logoIcon = new ImageIcon(img);
+        JLabel labelLogo = new JLabel(logoIcon);
+        labelLogo.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(labelLogo, BorderLayout.CENTER);
+
+        // Sous-titre "Inscrivez-vous ici"
+        JLabel labelSubtitle = new JLabel("Inscrivez-vous ici");
+        labelSubtitle.setFont(new Font("Arial", Font.PLAIN, 14));
+        labelSubtitle.setHorizontalAlignment(SwingConstants.CENTER);
+        topPanel.add(labelSubtitle, BorderLayout.SOUTH);
+
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+        JPanel formPanel = new JPanel(new GridLayout(5, 2, 10, 10));
+
+        formPanel.add(new JLabel("Nom :"));
         textNom = new JTextField();
-        panel.add(textNom);
+        formPanel.add(textNom);
 
-        labelPrenom = new JLabel("Prénom :");
-        panel.add(labelPrenom);
+        formPanel.add(new JLabel("Prénom :"));
         textPrenom = new JTextField();
-        panel.add(textPrenom);
+        formPanel.add(textPrenom);
 
-        labelEmail = new JLabel("Email :");
-        panel.add(labelEmail);
+        formPanel.add(new JLabel("Email :"));
         textEmail = new JTextField();
-        panel.add(textEmail);
+        formPanel.add(textEmail);
 
-        labelPassword = new JLabel("Mot de passe :");
-        panel.add(labelPassword);
+        formPanel.add(new JLabel("Mot de passe :"));
         textPassword = new JPasswordField();
-        panel.add(textPassword);
+        formPanel.add(textPassword);
 
-        // Bouton S'inscrire
         buttonRegister = new JButton("S'inscrire");
         buttonRegister.addActionListener(this);
-        panel.add(new JLabel()); // Ajout d'une cellule vide pour aligner le bouton sur la même ligne
-        panel.add(buttonRegister);
+        formPanel.add(new JLabel());
+        formPanel.add(buttonRegister);
 
-        // Ajout du panel à la fenêtre principale
-        add(panel, BorderLayout.CENTER);
+        mainPanel.add(formPanel, BorderLayout.CENTER);
 
-        // Ajout du lien de connexion en bas de la fenêtre
-        labelLogin = new JLabel("Déjà inscrit ? Cliquez ici pour vous connecter");
-        labelLogin.setForeground(Color.BLUE); // Changement de couleur pour indiquer qu'il s'agit d'un lien
-        labelLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Changement du curseur au survol
+        JLabel labelLogin = new JLabel("Déjà inscrit ? Cliquez ici pour vous connecter");
+        labelLogin.setForeground(Color.BLUE);
+        labelLogin.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
         labelLogin.setHorizontalAlignment(SwingConstants.CENTER);
         labelLogin.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
-                // Redirection vers la page de connexion (LoginPage) lors du clic sur le lien
                 new LoginPage();
-                dispose(); // Fermer la fenêtre d'inscription
+                dispose();
             }
         });
-        add(labelLogin, BorderLayout.SOUTH);
+        mainPanel.add(labelLogin, BorderLayout.SOUTH);
 
+        add(mainPanel);
         setVisible(true);
     }
-
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == buttonRegister) {
             // Récupérer les valeurs des champs de saisie

@@ -9,6 +9,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import biblio_Gestion_Lecteur.SessionUtilisateur;
 import biblio_Gestion_Lecteur.MesEmprunts;
+import biblioSession.LoginPage;
 
 
 public class CatalogueLecteur extends JFrame {
@@ -41,6 +42,7 @@ public class CatalogueLecteur extends JFrame {
         JButton empruntsButton = new JButton(empruntsIcon);
         empruntsButton.setMargin(new Insets(5, 10, 5, 10)); // Augmentation des marges internes du bouton
 
+
         // Création du bouton des emprunts avec texte
         JButton empruntsWithTextButton = new JButton("Voir mes emprunts", empruntsIcon);
         empruntsWithTextButton.setHorizontalTextPosition(SwingConstants.RIGHT); // Aligner le texte à droite de l'icône
@@ -58,7 +60,25 @@ public class CatalogueLecteur extends JFrame {
                 favorisLecteur.setVisible(true);
             }
         });
+// Création du bouton de déconnexion
+        JButton deconnexionButton = new JButton("Déconnexion");
+        deconnexionButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Créer une instance de la classe LoginPage et l'afficher
+                LoginPage login = new LoginPage();
+                login.setVisible(true);
+                // Fermer la fenêtre actuelle (CatalogueLecteur)
+                dispose();
+            }
+        });
 
+// Ajout du bouton de déconnexion au panneau de recherche
+        searchPanel.add(Box.createHorizontalGlue()); // Ajout d'espace pour centrer le bouton de déconnexion
+        searchPanel.add(deconnexionButton); // Ajout du bouton de déconnexion
+
+        searchPanel.add(Box.createHorizontalGlue()); // Ajout d'espace pour centrer le bouton de déconnexion
+        searchPanel.add(deconnexionButton); // Ajout du bouton de déconnexion au panneau de recherche
         searchPanel.add(new JLabel("Rechercher par titre : "));
         searchPanel.add(searchField);
         searchPanel.add(searchButton);
@@ -93,6 +113,7 @@ public class CatalogueLecteur extends JFrame {
         setLocationRelativeTo(null); // Centrer la fenêtre sur l'écran
         setVisible(true);
     }
+
     // Méthode pour rechercher des livres par titre
     private void rechercherLivresParTitre(String titre) {
         // Effacer tous les livres actuellement affichés

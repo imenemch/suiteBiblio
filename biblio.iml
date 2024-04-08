@@ -27,5 +27,6 @@
     </orderEntry>
     <orderEntry type="library" name="openjfx-22_windows-x64_bin-jmods" level="project" />
     <orderEntry type="library" name="javaFX" level="application" />
+    <orderEntry type="library" name="scenebuilder-21.0.0-all" level="application" />
   </component>
 </module>

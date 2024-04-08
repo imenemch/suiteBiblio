@@ -12,6 +12,7 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import javax.swing.table.DefaultTableCellRenderer;
 
 public class ListeUsers extends JFrame {
     private static JTable table;
@@ -20,15 +21,32 @@ public class ListeUsers extends JFrame {
     public ListeUsers() {
         setTitle("Liste des Utilisateurs");
         setSize(2000, 700);
+        setSize(900, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-        // Création de la barre de recherche et des boutons
+// Centrer la fenêtre au milieu de l'écran
+        setLocationRelativeTo(null);
+
         searchField = new JTextField(20);
-        JButton searchButton = new JButton("Rechercher");
-        JButton addButton = new JButton("Ajouter");
-        JButton editButton = new JButton("Modifier");
-        JButton deleteButton = new JButton("Supprimer");
+        ImageIcon searchIcon = new ImageIcon(getClass().getResource("/biblio_Gestion_Admin/search.png"));
+        ImageIcon addButtonIcon = new ImageIcon(getClass().getResource("/biblio_Gestion_Admin/useradd.png"));
+        ImageIcon editButtonIcon = new ImageIcon(getClass().getResource("/biblio_Gestion_Admin/edit.png"));
+        ImageIcon deleteButtonIcon = new ImageIcon(getClass().getResource("/biblio_Gestion_Admin/delete.png"));
+
+// Redimensionner les icônes
+        int iconWidth = 20;
+        int iconHeight = 20;
+        searchIcon = new ImageIcon(searchIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_DEFAULT));
+        addButtonIcon = new ImageIcon(addButtonIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_DEFAULT));
+        editButtonIcon = new ImageIcon(editButtonIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_DEFAULT));
+        deleteButtonIcon = new ImageIcon(deleteButtonIcon.getImage().getScaledInstance(iconWidth, iconHeight, Image.SCALE_DEFAULT));
+
+// Créer les boutons avec les icônes redimensionnées
+        JButton searchButton = new JButton(searchIcon);
+        JButton addButton = new JButton(addButtonIcon);
+        JButton editButton = new JButton(editButtonIcon);
+        JButton deleteButton = new JButton(deleteButtonIcon);
 
         // Création du lien vers CatalogueAdmin
         JLabel linkCatalogue = new JLabel("Accéder au Catalogue Admin");
@@ -64,7 +82,12 @@ public class ListeUsers extends JFrame {
         add(navPanel, BorderLayout.NORTH);
 
         // Création du modèle de tableau avec des colonnes vides
-        DefaultTableModel model = new DefaultTableModel();
+        DefaultTableModel model = new DefaultTableModel() {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Empêcher l'édition des cellules
+            }
+        };
         model.addColumn("ID");
         model.addColumn("Nom");
         model.addColumn("Prénom");
@@ -90,9 +113,18 @@ public class ListeUsers extends JFrame {
             });
         }
 
+
         // Création de la table avec le modèle
         table = new JTable(model);
         table.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+
+        // Centrer les cellules du tableau
+        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
+        centerRenderer.setHorizontalAlignment(JLabel.CENTER);
+        table.setDefaultRenderer(Object.class, centerRenderer);
+
+        // Augmenter la hauteur des lignes du tableau
+        table.setRowHeight(30);
 
         // Ajout de la table à un JScrollPane pour permettre le défilement si nécessaire
         JScrollPane scrollPane = new JScrollPane(table);
@@ -100,6 +132,7 @@ public class ListeUsers extends JFrame {
 
         setVisible(true);
     }
+
 
     // Méthode pour rechercher un utilisateur par nom, prénom ou email
     private void rechercherUtilisateur() {
