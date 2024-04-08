@@ -93,7 +93,6 @@ public class ListeUsers extends JFrame {
         model.addColumn("Prénom");
         model.addColumn("Email");
         model.addColumn("Rôle");
-        model.addColumn("Actif");
         model.addColumn("Date de création");
 
         // Récupération de la liste des utilisateurs depuis la base de données
@@ -108,7 +107,6 @@ public class ListeUsers extends JFrame {
                     user.getPrenom(),
                     user.getEmail(),
                     user.getRole(),
-                    user.getActive(),
                     user.getDate_created()
             });
         }
