@@ -5,7 +5,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
-
+import biblioSession.LoginPage;
 public class CatalogueAdmin extends JFrame {
     private JTable table;
     private JTextField searchField;
@@ -108,6 +108,7 @@ public class CatalogueAdmin extends JFrame {
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         bottomPanel.add(buttonRetour);
 
+
         JPanel mainPanel = new JPanel(new BorderLayout());
         mainPanel.add(searchPanel, BorderLayout.NORTH);
         mainPanel.add(buttonPanel, BorderLayout.CENTER);
@@ -148,6 +149,7 @@ public class CatalogueAdmin extends JFrame {
         buttonAdd.addActionListener(e -> {
             new AjoutLivreForm();
         });
+
 
         // Appliquez le rendu personnalisé pour afficher les images dans la table
         table.getColumnModel().getColumn(8).setCellRenderer(new ImageRenderer());
