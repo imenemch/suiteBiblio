@@ -2,17 +2,11 @@ package biblio_Gestion_Admin;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Timestamp;
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,6 +28,7 @@ public class AjoutLivreForm extends JFrame {
         setTitle("Ajouter un Livre");
         setSize(400, 350);
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null); // Centrer l'interface
         setLayout(new GridLayout(9, 2));
 
         JLabel titreLabel = new JLabel("Titre:");
@@ -72,14 +67,11 @@ public class AjoutLivreForm extends JFrame {
         add(new JLabel("Image de couverture:"));
         add(choisirImageBtn);
 
-        choisirImageBtn.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                JFileChooser fileChooser = new JFileChooser();
-                int result = fileChooser.showOpenDialog(AjoutLivreForm.this);
-                if (result == JFileChooser.APPROVE_OPTION) {
-                    selectedImageFile = fileChooser.getSelectedFile();
-                }
+        choisirImageBtn.addActionListener(e -> {
+            JFileChooser fileChooser = new JFileChooser();
+            int result = fileChooser.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                selectedImageFile = fileChooser.getSelectedFile();
             }
         });
 
@@ -88,28 +80,26 @@ public class AjoutLivreForm extends JFrame {
         JButton addButton = new JButton("Ajouter");
         add(addButton);
 
-        addButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ajouterLivre();
-            }
-        });
+        addButton.addActionListener(e -> ajouterLivre());
 
-        // Label pour l'ajout d'auteur
-        ajouterAuteurLabel = new JLabel("<html><u>Si l'auteur n'existe pas dans la liste. Cliquez ici pour l'ajouter</u></html>");
-        ajouterAuteurLabel.setForeground(Color.BLUE); // Couleur bleue pour le lien cliquable
+        // Création du label avec un style amélioré
+        ajouterAuteurLabel = new JLabel("<html><u>Si l'auteur n'existe pas dans la liste, cliquez ici pour l'ajouter</u></html>");
+        ajouterAuteurLabel.setForeground(Color.BLUE); // Couleur bleue pour le lien
+        ajouterAuteurLabel.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR)); // Curseur de la main au survol
+        Font font = ajouterAuteurLabel.getFont(); // Police actuelle
+        ajouterAuteurLabel.setFont(font.deriveFont(Font.BOLD)); // Police en gras
         add(ajouterAuteurLabel);
 
-        // Ajout d'un ActionListener pour détecter les clics sur le label d'ajout d'auteur
-        ajouterAuteurLabel.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                // Redirection vers la page d'ajout d'auteur
+
+        ajouterAuteurLabel.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent evt) {
                 ouvrirPageAjoutAuteur();
             }
         });
 
         setVisible(true);
     }
+
 
     private void ouvrirPageAjoutAuteur() {
         // Ouvrir la page d'ajout d'auteur

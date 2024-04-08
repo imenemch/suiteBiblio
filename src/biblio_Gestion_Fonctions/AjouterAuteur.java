@@ -1,5 +1,7 @@
 package biblio_Gestion_Fonctions;
+
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.*;
 import java.sql.*;
 
@@ -12,8 +14,15 @@ public class AjouterAuteur extends JFrame implements ActionListener {
         this.connexion = connexion;
 
         setTitle("Ajouter un auteur");
-        setSize(300, 150);
+        setSize(350, 200);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null); // Centrer la fenêtre sur l'écran
+
+        // Création d'un titre en haut de la fenêtre
+        JPanel titlePanel = new JPanel();
+        JLabel titleLabel = new JLabel("Ajouter un auteur");
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        titlePanel.add(titleLabel);
 
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
@@ -32,8 +41,13 @@ public class AjouterAuteur extends JFrame implements ActionListener {
         btnAjouter.addActionListener(this);
         panel.add(btnAjouter);
 
+        add(titlePanel, BorderLayout.NORTH); // Ajout du titre en haut de la fenêtre
         add(panel);
 
+        int xOffset =380;
+        int yOffset = 70;
+        setLocationRelativeTo(null); // Centrer la fenêtre sur l'écran
+        setLocation(getX() + xOffset, getY() + yOffset); // Décaler la fenêtre
         setVisible(true);
     }
 
