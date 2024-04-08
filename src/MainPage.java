@@ -3,6 +3,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import biblio_Gestion_Lecteur.CatalogueLecteur;
+
 public class MainPage extends JFrame {
     public MainPage() {
         setTitle("Bibliothèque en ligne");
@@ -15,17 +16,10 @@ public class MainPage extends JFrame {
         JButton browseBooksButton = new JButton("Parcourir les livres");
         navPanel.add(browseBooksButton);
 
-        // Sélection en vedette
-        JPanel featuredPanel = new JPanel(new BorderLayout());
-        JLabel featuredLabel = new JLabel("Sélection en vedette");
-        featuredLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        // Ajoutez ici votre sélection en vedette de livres sous forme de composants Swing (par exemple des JLabels ou des JButtons)
-
-        // Témoignages ou critiques
-        JPanel testimonialsPanel = new JPanel(new BorderLayout());
-        JLabel testimonialsLabel = new JLabel("Témoignages");
-        testimonialsLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        // Ajoutez ici des témoignages ou des critiques sous forme de texte ou d'autres composants Swing
+        // Vidéo
+        JPanel videoPanel = new JPanel(new BorderLayout());
+        JLabel videoLabel = new JLabel(new ImageIcon("src/video.mp4")); // Remplacez "path_to_your_video_file" par le chemin de votre fichier vidéo
+        videoPanel.add(videoLabel, BorderLayout.CENTER);
 
         // Call-to-action
         JPanel ctaPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
@@ -37,9 +31,7 @@ public class MainPage extends JFrame {
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.Y_AXIS));
         mainPanel.add(navPanel);
         mainPanel.add(Box.createVerticalStrut(20)); // Espace vertical
-        mainPanel.add(featuredPanel);
-        mainPanel.add(Box.createVerticalStrut(20)); // Espace vertical
-        mainPanel.add(testimonialsPanel);
+        mainPanel.add(videoPanel); // Ajout de la vidéo
         mainPanel.add(Box.createVerticalStrut(20)); // Espace vertical
         mainPanel.add(ctaPanel);
 

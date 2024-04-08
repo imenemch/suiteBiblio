@@ -1,57 +1,82 @@
 package biblioSession;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
 import biblio_Gestion_Lecteur.CatalogueLecteur;
 import biblioSession.UserBdd;
 import biblioSession.PswdHash;
 
 public class LoginPage extends JFrame implements ActionListener {
-    private JLabel labelEmail, labelPassword;
+    private JLabel labelEmail, labelPassword, labelWelcome, labelLogo;
     private JTextField textEmail;
     private JPasswordField textPassword;
     private JButton buttonLogin, buttonRegister;
 
     public LoginPage() {
         setTitle("Connexion");
-        setSize(400, 200);
+        setSize(500, 400);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLayout(new BorderLayout());
+        setLocationRelativeTo(null); // Centrer la fenêtre
 
-        JPanel formPanel = new JPanel(new GridLayout(2, 2, 5, 5));
-        formPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+        // Panel principal
+        JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        // Panel supérieur pour le logo et le sous-titre
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
+
+// Sous-titre "Connectez-vous ici"
+        JLabel labelSubtitle = new JLabel("Connectez-vous ici");
+        labelSubtitle.setFont(new Font("Arial", Font.PLAIN, 14));
+        labelSubtitle.setHorizontalAlignment(SwingConstants.CENTER); // Alignement centré
+        topPanel.add(labelSubtitle, BorderLayout.SOUTH); // Positionnement en bas
+
+// Logo
+        ImageIcon logoIcon = new ImageIcon("src/biblioSession/logo.png");
+        Image img = logoIcon.getImage().getScaledInstance(150, 150, Image.SCALE_SMOOTH); // Réduire la taille du logo à 150x150 pixels
+        logoIcon = new ImageIcon(img);
+        JLabel labelLogo = new JLabel(logoIcon);
+        labelLogo.setHorizontalAlignment(SwingConstants.CENTER); // Alignement centré
+        topPanel.add(labelLogo, BorderLayout.CENTER); // Positionnement centré
+
+        mainPanel.add(topPanel, BorderLayout.NORTH);
+
+
+
+        // Panel pour les champs de saisie et les boutons
+        JPanel formPanel = new JPanel(new GridLayout(3, 2, 5, 5));
 
         labelEmail = new JLabel("Email:");
-        labelEmail.setFont(new Font("Arial", Font.PLAIN, 14));
+        labelEmail.setFont(new Font("Arial", Font.PLAIN, 16));
         formPanel.add(labelEmail);
+
         textEmail = new JTextField();
-        textEmail.setFont(new Font("Arial", Font.PLAIN, 14));
+        textEmail.setFont(new Font("Arial", Font.PLAIN, 16));
         formPanel.add(textEmail);
 
         labelPassword = new JLabel("Mot de passe:");
-        labelPassword.setFont(new Font("Arial", Font.PLAIN, 14));
+        labelPassword.setFont(new Font("Arial", Font.PLAIN, 16));
         formPanel.add(labelPassword);
-        textPassword = new JPasswordField();
-        textPassword.setFont(new Font("Arial", Font.PLAIN, 14));
-        formPanel.add(textPassword);
 
-        JPanel buttonPanel = new JPanel(new GridLayout(1, 2, 10, 10));
-        buttonPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 20, 20));
+        textPassword = new JPasswordField();
+        textPassword.setFont(new Font("Arial", Font.PLAIN, 16));
+        formPanel.add(textPassword);
 
         buttonLogin = new JButton("Se connecter");
         buttonLogin.addActionListener(this);
-        buttonLogin.setFont(new Font("Arial", Font.BOLD, 14));
-        buttonPanel.add(buttonLogin);
+        buttonLogin.setFont(new Font("Arial", Font.BOLD, 16));
+        formPanel.add(buttonLogin);
 
         buttonRegister = new JButton("Pas encore inscrit?");
         buttonRegister.addActionListener(this);
-        buttonRegister.setFont(new Font("Arial", Font.BOLD, 14));
-        buttonPanel.add(buttonRegister);
+        buttonRegister.setFont(new Font("Arial", Font.BOLD, 16));
+        formPanel.add(buttonRegister);
 
-        add(formPanel, BorderLayout.CENTER);
-        add(buttonPanel, BorderLayout.SOUTH);
+        mainPanel.add(formPanel, BorderLayout.CENTER);
 
+        add(mainPanel);
         setVisible(true);
     }
 
