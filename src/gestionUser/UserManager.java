@@ -94,11 +94,10 @@ public class UserManager
                 String email = rs.getString("email");
                 String password = rs.getString("password");
                 String role = rs.getString("role");
-                int active = rs.getInt("active");
                 Timestamp dateCreated = rs.getTimestamp("date_created");
 
                 // Créer un objet User avec les données récupérées
-                User user = new User(id, nom, prenom, email, password, role, active, dateCreated);
+                User user = new User(id, nom, prenom, email, password, role, dateCreated);
 
                 // Ajouter l'utilisateur à la liste des utilisateurs
                 userList.add(user);
@@ -112,7 +111,7 @@ public class UserManager
     }
 
     public boolean updateUser(User user) {
-        String sql = "UPDATE users SET nom = ?, prenom = ?, email = ?, role = ?, active = ? WHERE id_u = ?";
+        String sql = "UPDATE users SET nom = ?, prenom = ?, email = ?, role = ? WHERE id_u = ?";
 
         try (
                 Connection conn = database.getConnection();
@@ -122,8 +121,7 @@ public class UserManager
             stmt.setString(2, user.getPrenom());
             stmt.setString(3, user.getEmail());
             stmt.setString(4, user.getRole());
-            stmt.setInt(5, user.getActive());
-            stmt.setInt(6, user.getId());
+            stmt.setInt(5, user.getId());
 
             int rowsAffected = stmt.executeUpdate();
             return rowsAffected > 0;
@@ -190,7 +188,7 @@ public class UserManager
                     Timestamp dateCreated = rs.getTimestamp("date_created");
 
                     // Créer un objet User avec les données récupérées
-                    User user = new User(id, nom, prenom, email, password, role, active, dateCreated);
+                    User user = new User(id, nom, prenom, email, password, role, dateCreated);
 
                     // Ajouter l'utilisateur à la liste des utilisateurs
                     userList.add(user);
@@ -229,11 +227,10 @@ public class UserManager
                     String email = rs.getString("email");
                     String password = rs.getString("password");
                     String role = rs.getString("role");
-                    int active = rs.getInt("active");
                     Timestamp dateCreated = rs.getTimestamp("date_created");
 
                     // Créer un objet User avec les données récupérées
-                    user = new User(userId, nom, prenom, email, password, role, active, dateCreated);
+                    user = new User(userId, nom, prenom, email, password, role, dateCreated);
                 }
             }
         } catch (SQLException e) {

@@ -11,15 +11,6 @@ public class User {
     private String role; // "lecteur" ou "admin"
 	private int active;
 	private Timestamp date_created;
-
-	public int getActive() {
-		return active;
-	}
-
-	public void setActive(int active) {
-		this.active = active;
-	}
-
 	public Timestamp getDate_created() {
 		return date_created;
 	}
@@ -28,14 +19,13 @@ public class User {
 		this.date_created = date_created;
 	}
 
-	public User (int id,String nom, String prenom, String email, String password, String role, int active, Timestamp date_created) {
+	public User (int id,String nom, String prenom, String email, String password, String role, Timestamp date_created) {
 	 this.id = id;
 	 this.nom = nom;
 	 this.prenom = prenom;
 	 this.email = email;
 	 this.password = password;
 	 this.role = role;
-	 this.active = active;
 	 this.date_created = date_created;
  }
 

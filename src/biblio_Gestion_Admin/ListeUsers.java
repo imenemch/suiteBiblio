@@ -157,7 +157,6 @@ public class ListeUsers extends JFrame {
                     user.getPrenom(),
                     user.getEmail(),
                     user.getRole(),
-                    user.getActive(),
                     user.getDate_created()
             });
         }
@@ -170,13 +169,13 @@ public class ListeUsers extends JFrame {
 
     // Méthode pour charger tous les utilisateurs dans la table
     public static void chargerTousLesUtilisateurs() {
-        // Récupérer tous les utilisateurs depuis la base de données
-        UserManager userManager = new UserManager(new Database());
-        List<User> userList = userManager.getAllUsers();
-
         // Effacer le contenu actuel de la table
         DefaultTableModel model = (DefaultTableModel) table.getModel();
         model.setRowCount(0);
+
+        // Récupérer tous les utilisateurs depuis la base de données
+        UserManager userManager = new UserManager(new Database());
+        List<User> userList = userManager.getAllUsers();
 
         // Ajouter tous les utilisateurs à la table
         for (User user : userList) {
@@ -186,7 +185,6 @@ public class ListeUsers extends JFrame {
                     user.getPrenom(),
                     user.getEmail(),
                     user.getRole(),
-                    user.getActive(),
                     user.getDate_created()
             });
         }
