@@ -6,6 +6,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.sql.*;
 import biblioSession.LoginPage;
+
 public class CatalogueAdmin extends JFrame {
     private JTable table;
     private JTextField searchField;
