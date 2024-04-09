@@ -245,6 +245,8 @@ public class CatalogueLecteur extends JFrame {
                         chargerTousLesLivres();
                     } else {
                         JOptionPane.showMessageDialog(CatalogueLecteur.this, "Vous devez vous connecter pour pouvoir emprunter ce livre !");
+                        // Redirection vers la page de connexion
+                        redirigerVersLoginPage();
                     }
                 }
             }
@@ -288,6 +290,7 @@ public class CatalogueLecteur extends JFrame {
                     addToFavoritesButton.setIcon(smallHeartRedIcon);
                 } else {
                     JOptionPane.showMessageDialog(CatalogueLecteur.this, "Vous devez vous connecter pour pouvoir ajouter ce livre aux favoris !");
+                    redirigerVersLoginPage();
                 }
             }
         });
@@ -414,7 +417,13 @@ public class CatalogueLecteur extends JFrame {
             return false;
         }
     }
-
+    // Méthode pour rediriger l'utilisateur vers la page de connexion
+    private void redirigerVersLoginPage() {
+        LoginPage login = new LoginPage();
+        login.setVisible(true);
+        // Fermer la fenêtre actuelle (CatalogueLecteur)
+        dispose();
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(CatalogueLecteur::new);
