@@ -16,6 +16,7 @@ public class MesEmprunts extends JFrame {
 
     public MesEmprunts() {
         setTitle("Mes Emprunts");
+
         setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setLayout(new BorderLayout());
 
@@ -25,6 +26,7 @@ public class MesEmprunts extends JFrame {
         retournerButton.addActionListener(new RetournerButtonActionListener());
         topPanel.add(retournerButton);
         add(topPanel, BorderLayout.NORTH);
+
 
         // Créer un modèle de table par défaut pour stocker les données des emprunts
         DefaultTableModel tableModel = new DefaultTableModel();
@@ -104,20 +106,21 @@ public class MesEmprunts extends JFrame {
                         updateStatement.setInt(2, idEmp);
                         updateStatement.executeUpdate();
                         updateStatement.close();
+
+                        // Afficher le message de succès
+                        JOptionPane.showMessageDialog(MesEmprunts.this, "Livre emprunté avec succès");
                     } catch (SQLException ex) {
                         ex.printStackTrace();
                     }
                     // Rafraîchir les données du tableau
                     rafraichirTableau();
-                } else {
-                    // Le livre a déjà été retourné, vous pouvez afficher un message d'erreur ou effectuer d'autres actions si nécessaire
-                    JOptionPane.showMessageDialog(MesEmprunts.this, "Ce livre a déjà été retourné.");
                 }
             } else {
                 // Aucune ligne n'est sélectionnée, afficher un message d'erreur
                 JOptionPane.showMessageDialog(MesEmprunts.this, "Veuillez sélectionner un emprunt.");
             }
         }
+
 
         private void rafraichirTableau() {
             // Effacer les données actuelles du tableau

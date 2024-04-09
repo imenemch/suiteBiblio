@@ -241,7 +241,7 @@ public class CatalogueLecteur extends JFrame {
                     int idUtilisateur = SessionUtilisateur.getInstance().getId_u();
                     if (idUtilisateur != 0) { // Vérifier si l'utilisateur est connecté
                         emprunterLivre(idLivre); // Appeler la méthode pour emprunter le livre
-                        JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été emprunté avec succès.");
+                       // JOptionPane.showMessageDialog(CatalogueLecteur.this, "Le livre a été emprunté avec succès.");
                         chargerTousLesLivres();
                     } else {
                         JOptionPane.showMessageDialog(CatalogueLecteur.this, "Vous devez vous connecter pour pouvoir emprunter ce livre !");
